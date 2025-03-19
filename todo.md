@@ -52,7 +52,7 @@
 - Project timeline and prioritization
 - Budget for development and APIs
 - Target user capacity for MVP
-- Testing strategy with school teachers
+- Initial market focus (corporate vs. education)
 - Licensing and terms of service approach
 
 ## Tech Stack Details to Research
