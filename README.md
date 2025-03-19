@@ -1,27 +1,50 @@
 # RAG Writing Assistant
 
-A multi-user, RAG-based writing assistant that generates content in the user's authentic voice.
+A powerful writing assistant that uses RAG (Retrieval-Augmented Generation) to help you write in your unique voice.
 
-## Overview
+## Project Structure
 
-This application allows users to upload their writing samples and generate new content that matches their personal writing style.
+```
+rag-writing-assistant/
+├── docs/                    # Documentation
+│   ├── planning/           # Planning documents
+│   │   ├── PRD.md         # Product Requirements Document
+│   │   ├── marketanalysis.md
+│   │   └── implementationplan.md
+│   ├── technical/         # Technical documentation
+│   │   ├── setupguide    # Development setup guide
+│   │   └── todo.md       # Development tasks
+│   ├── design/           # Design documentation
+│   │   ├── UIdesignsystem
+│   │   ├── landingpagedesign.md
+│   │   └── userflow.md
+│   └── project-management/
+│       └── projectstatus.md
+├── src/                    # Source code
+│   ├── app/               # Next.js app directory
+│   ├── components/        # React components
+│   └── lib/              # Utility functions
+└── public/                # Static assets
+```
 
-## Project Status
+## Quick Links
 
-This project is currently in development.
+- [Project Status](docs/project-management/projectstatus.md)
+- [Setup Guide](docs/technical/setupguide)
+- [Product Requirements](docs/planning/PRD.md)
+- [Implementation Plan](docs/planning/implementationplan.md)
 
-## Documentation
+## Getting Started
 
-### Product Planning
-- [Product Requirements Document](PRD.md)
-- [Implementation Plan](ImplementationPlan.md)
-- [User Flow Diagram](UserFlow.md)
-- [Todo List](TODO.md)
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run the development server: `npm run dev`
+4. Open [http://localhost:3000](http://localhost:3000)
 
-### Design and Market Analysis
-- [Market Analysis and Target Users](MarketAnalysis.md)
-- [Landing Page Design Concept](LandingPageDesign.md)
-- [UI Design System](UIDesignSystem.md)
+## Contributing
 
-### Setup
-- [Setup Guide](SetupGuide.md)
+Please read our [Setup Guide](docs/technical/setupguide) for detailed information about contributing to this project.
+
+## License
+
+[MIT](LICENSE)
