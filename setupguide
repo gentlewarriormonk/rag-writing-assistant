@@ -1,0 +1,107 @@
+# GitHub and Cursor Setup Guide for Beginners
+
+This guide provides step-by-step instructions for setting up GitHub and Cursor for the RAG Writing Assistant project.
+
+## Setting Up GitHub (No Previous Experience Required)
+
+### 1. Create a GitHub Account
+1. Go to [github.com](https://github.com)
+2. Click "Sign up" and follow the instructions
+3. Choose the free plan when prompted
+4. Verify your email address when you receive the verification email
+
+### 2. Create a New Repository
+1. After logging in, click the "+" icon in the top-right corner
+2. Select "New repository"
+3. For "Repository name", enter: `rag-writing-assistant`
+4. Add a description: "A multi-user RAG-based writing assistant for educators"
+5. Keep the repository "Public" (or choose "Private" if you prefer)
+6. Check "Add a README file"
+7. Click "Create repository"
+
+### 3. Understanding GitHub's Basic Interface
+- **Code tab**: Where your project files live
+- **Issues tab**: For tracking tasks, bugs, and features
+- **Pull requests**: For reviewing code changes
+- **Actions**: For automated workflows (we'll use this later)
+- **Projects**: For project management (optional)
+- **Wiki**: For documentation (optional)
+
+### 4. Upload Initial Documents (Optional)
+1. Click on the "Add file" button
+2. Select "Upload files"
+3. Drag and drop files or click to select files
+4. Add a commit message like "Initial documentation upload"
+5. Click "Commit changes"
+
+## Setting Up Cursor (AI-Powered Code Editor)
+
+### 1. Download and Install Cursor
+1. Go to [cursor.sh](https://cursor.sh)
+2. Click "Download" for your operating system (Windows, macOS, or Linux)
+3. Follow the installation instructions for your OS
+4. Launch Cursor after installation
+
+### 2. Connect Cursor to Your GitHub Account
+1. In Cursor, click on the accounts icon in the bottom-left corner
+2. Click "Sign in with GitHub"
+3. Authorize Cursor to access your GitHub account
+4. Once connected, your GitHub repositories will be accessible in Cursor
+
+### 3. Clone Your Repository in Cursor
+1. In Cursor, click "Clone Repository" (or press `Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows and type "Git: Clone")
+2. Paste your repository URL: `https://github.com/YOUR-USERNAME/rag-writing-assistant.git`
+3. Choose a local folder to store the project
+4. Wait for the repository to be cloned
+
+### 4. Basic Cursor Features for Beginners
+- **AI Command Bar**: Press `Cmd+K` (Mac) or `Ctrl+K` (Windows) to access AI features
+- **Code Explanation**: Highlight code and press `Cmd+I` (Mac) or `Ctrl+I` (Windows)
+- **Generate Code**: Describe what you want in comments and Cursor can help write it
+- **Terminal**: Access via the menu or press ``Ctrl+` `` to run commands
+
+## Working with Files in Your Repository
+
+### 1. Creating New Files
+1. In Cursor, right-click in the Explorer panel (left side)
+2. Select "New File"
+3. Name your file (include the extension, like `.py` for Python files)
+4. Edit the file in the editor
+
+### 2. Saving Changes
+1. Edit files in Cursor
+2. Save changes with `Cmd+S` (Mac) or `Ctrl+S` (Windows)
+3. Changes are saved locally but not yet on GitHub
+
+### 3. Committing and Pushing Changes to GitHub
+1. Click on the Source Control icon in the left sidebar (looks like a branch)
+2. Review your changes
+3. Enter a commit message describing what you changed
+4. Click the checkmark icon to commit
+5. Click "Sync Changes" or "Push" to upload to GitHub
+
+### 4. Getting Latest Changes from GitHub
+1. Click on the Source Control icon
+2. Click "Pull" to get the latest changes from GitHub
+
+## Troubleshooting Common Issues
+
+### Authentication Problems
+- **Issue**: GitHub asks for credentials repeatedly
+- **Solution**: Use a personal access token or set up SSH keys (we can provide instructions if needed)
+
+### Merge Conflicts
+- **Issue**: GitHub says there are conflicting changes
+- **Solution**: Use Cursor's merge conflict resolution tools or let us know for guidance
+
+### File Not Saving
+- **Issue**: Changes aren't being saved
+- **Solution**: Check if the file is read-only or if you have permission to write to the directory
+
+## Getting Help
+- If you encounter any issues with GitHub or Cursor, please describe the exact problem and we'll provide detailed instructions to resolve it
+- Include screenshots of error messages when possible
+- Remember that making mistakes is normal! Version control exists to help recover from errors
+
+## Next Steps
+Once your GitHub repository and Cursor are set up, we'll move on to setting up the project structure and starting development. Each step will include detailed instructions appropriate for beginners.
