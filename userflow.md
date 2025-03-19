@@ -78,8 +78,7 @@ flowchart TD
         ManageSubscription
     end
     
-    subgraph "Analytics"
-        Analytics
+    subgraph "Analytics Section"
         CorpusStats
         UsageStats
     end
