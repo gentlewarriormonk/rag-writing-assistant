@@ -1,114 +1,179 @@
-# RAG Writing Assistant: Product Requirements Document (PRD)
+# Revised Product Requirements Document
 
-## Product Overview
+## 1. Product Overview
 
-The RAG Writing Assistant is a web-based SaaS platform that enables users to generate content in their authentic writing style using Retrieval-Augmented Generation (RAG) technology. The platform is specifically designed for educators who want to create content that matches their unique voice across various formats like essays, newsletters, and podcasts.
+### Purpose
+Create a secure, user-friendly application that addresses [core business need] while maintaining high security standards and optimal performance.
 
-## Target Users
+### Target Audience
+- Primary: [Define primary users]
+- Secondary: [Define secondary users]
+- Stakeholders: [List key stakeholders]
 
-1. **Primary Users**: 
-   - Corporate communications teams needing consistent executive messaging
-   - Marketing agencies managing multiple client voice profiles
-   - Professional writers and content creators scaling their output
-   
-2. **Secondary Users**: 
-   - Legal professionals generating standard documents
-   - Teachers and educators creating learning materials
-   - HR departments developing communications
-   
-3. **Future Expansion**: 
-   - Customer support teams
-   - Non-native English speakers in professional roles
-   - Social media managers
-   - Academic researchers
+### Success Metrics
+- User adoption rate of 30% within first 3 months
+- Security compliance with zero critical vulnerabilities
+- User satisfaction rating above 4.5/5
+- Reduced support tickets related to usability issues
 
-## Core Product Capabilities
+## 2. User Experience Requirements
 
-### 1. User Account Management
-- User registration and authentication
-- Secure login and password recovery
-- User profile management
-- Subscription/billing management (future phase)
-
-### 2. Personal Corpus Management
-- Upload and manage text files (.txt format)
-- Organize texts into categories/tags
-- View corpus statistics and content breakdown
-- Reprocess corpus on demand
-
-### 3. Writing Style Analysis
-- Automatic style extraction from user texts
-- Writing style insights and visualization
-- Style variation detection across content types
-
-### 4. Content Generation
-- Generate new content based on user's authentic style
-- Apply style adjustments (formal, conversational, humorous, etc.)
-- Format content for different purposes (essays, emails, etc.)
-- Save, edit, and export generated content
-
-### 5. Multi-Version Support
-- Create multiple "voices" based on different subsets of texts
-- Compare generation results across different voices
-- Save favorite generation settings as presets
-
-## Technical Requirements
-
-### User Data Management
-- Secure storage of user credentials
-- Isolation of user data and vectors
-- Regular backups and data export options
-- GDPR/privacy compliance
-
-### Performance Requirements
-- Content generation in under 30 seconds
-- Corpus processing of 100+ pages in under 5 minutes
-- Support for concurrent users (initial target: 50 simultaneous users)
-- 99.9% uptime for production deployment
-
-### Security Requirements
-- End-to-end encryption for sensitive data
-- API key security and rotation
-- Regular security audits and penetration testing
-- Secure handling of API credentials
-
-## User Experience Requirements
-
-### User Interface
-- Clean, intuitive interface designed for educators
-- Responsive design (desktop, tablet, mobile)
-- Accessibility compliance (WCAG 2.1 AA)
-- Consistent visual language and branding
+### Visual Design
+- **Color Scheme**: 
+  - Primary Background: #ffffff (White)
+  - Primary Text: #0f172a (Dark Blue/Black)
+  - Primary Accent: #0EA5E9 (Bright Blue)
+  - Secondary Accent: #06B6D4 (Teal)
+  - Tertiary/Neutral: #64748B (Gray)
+- **Typography**: Inter font family throughout
+- **Design System**: Follow Material Design or custom component system
+- **Responsiveness**: Fully responsive from mobile (320px) to desktop (1920px+)
 
 ### User Flows
-- Streamlined onboarding process with guided setup
-- Intuitive corpus management
-- Simple content generation with clear options
-- Effective error handling and user feedback
 
-## MVP Features
-For the initial release, the product will focus on:
+#### Authentication Flow
+1. **Registration**
+   - Email/password registration with strong password requirements
+   - Email verification required
+   - CAPTCHA protection against bots
+   - Social login options
 
-1. Basic user account management
-2. Single corpus per user
-3. Core text processing and RAG capabilities
-4. Essential content generation features
-5. Basic style adjustments
-6. Simple analytics on corpus and usage
+2. **Login Process**
+   - Email/password login
+   - Social login options
+   - "Remember me" functionality
+   - Password recovery flow
+   - Optional MFA (Multi-Factor Authentication)
 
-## Future Enhancements
-Planned for post-MVP releases:
+3. **Account Management**
+   - Password change
+   - Profile information update
+   - Account deletion option
+   - Session management (view/revoke active sessions)
 
-1. Multiple RAG models per user
-2. Advanced style analytics
-3. Collaborative features for teams
-4. Integration with educational platforms
-5. API access for developers
-6. Enhanced analytics and insights
+#### Core Application Flows
+1. **[Core Flow 1]**
+   - Step-by-step breakdown with security considerations
+   - Permission requirements at each step
 
-## Success Metrics
-- User registration and retention
-- Volume of content generated
-- User satisfaction (measured via surveys)
-- Engagement metrics (frequency of use, session duration)
-- Word count processed and generated
+2. **[Core Flow 2]**
+   - Step-by-step breakdown with security considerations
+   - Permission requirements at each step
+
+## 3. Feature Requirements
+
+### MVP (Must-Have) Features
+1. **Secure User Authentication**
+   - Registration, login, password recovery
+   - Role-based access control
+   - Session management
+
+2. **[Core Feature 1]**
+   - Detailed requirements
+   - Security considerations
+   - Success criteria
+
+3. **[Core Feature 2]**
+   - Detailed requirements
+   - Security considerations
+   - Success criteria
+
+### Post-MVP Features (Prioritized)
+1. **[Feature 1]**
+   - Requirements and rationale
+   - Security implications
+
+2. **[Feature 2]**
+   - Requirements and rationale
+   - Security implications
+
+### Features Being Cut/Deprioritized
+1. **[Cut Feature 1]**
+   - Rationale for cutting
+   - Potential future implementation conditions
+
+2. **[Cut Feature 2]**
+   - Rationale for cutting
+   - Potential future implementation conditions
+
+## 4. Technical Requirements
+
+### Performance
+- Page load time under 2 seconds
+- API response time under 500ms
+- Smooth animations (60fps)
+- Optimized asset loading
+
+### Security Requirements
+- HTTPS for all communications
+- Data encryption at rest and in transit
+- Input validation and sanitization
+- Protection against OWASP Top 10 vulnerabilities
+- Regular security audits
+- Secure dependency management
+
+### Compatibility
+- Browser support: Latest 2 versions of Chrome, Firefox, Safari, Edge
+- Mobile OS: iOS 14+, Android 10+
+- Accessibility: WCAG 2.1 AA compliance
+
+### Integration Requirements
+- [List external systems to integrate with]
+- Secure API communication patterns
+- Rate limiting and throttling
+
+## 5. Data Requirements
+
+### Data Models
+- User data model
+- [Other core data models]
+- Data relationships and constraints
+
+### Data Security
+- PII handling guidelines
+- Data retention policies
+- Backup and recovery procedures
+- Data minimization principles
+
+### Analytics and Monitoring
+- User behavior tracking requirements
+- Security monitoring requirements
+- Performance monitoring requirements
+
+## 6. Compliance Requirements
+
+- GDPR compliance measures
+- [Other relevant regulations]
+- Regular compliance audits
+- Privacy policy requirements
+
+## 7. Timeline and Milestones
+
+### Phase 1: Authentication & Core Architecture (Weeks 1-2)
+- Complete security architecture
+- Implement authentication system
+- Set up security monitoring
+
+### Phase 2: Core Features (Weeks 3-5)
+- Implement [Core Feature 1]
+- Implement [Core Feature 2]
+- Security testing of core features
+
+### Phase 3: Refinement & Launch (Weeks 6-8)
+- UI/UX refinement
+- Performance optimization
+- Final security audit
+- Controlled release
+
+## 8. Success Criteria & Testing
+
+### Functional Testing Requirements
+- Test cases for all user flows
+- Edge case testing
+- Cross-browser testing
+
+### Security Testing Requirements
+- Authentication penetration testing
+- API security testing
+- Dependency vulnerability scanning
+- Regular security audits
