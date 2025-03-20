@@ -1,175 +1,172 @@
-# Implementation Plan for Multi-User RAG Writing Assistant
+# Implementation Plan
 
-## Phase 1: Architecture Design & Setup (2 weeks)
+## Phase 1: Foundation & Authentication (Weeks 1-2)
 
-### 1.1 Project Structure Setup
-- Create a new GitHub repository
-- Set up basic GitHub structure and documentation
-- Create Next.js frontend project (using create-next-app)
-- Create FastAPI backend project with clear structure
-- Set up development environment variables
-- Create detailed setup instructions for beginners
+### Week 1: Project Setup & Security Foundation
 
-### 1.2 Service Setup and Configuration
-- Set up Vercel account and configure project
-- Set up Railway/Render account for backend hosting
-- Set up Supabase/Neon for database hosting
-- Configure pgvector extension on database
-- Set up Cloudinary/S3 for file storage
-- Document all API keys and access credentials securely
+#### Day 1-2: Project Initialization
+- [ ] Initialize React project with TypeScript
+- [ ] Set up folder structure following security best practices
+- [ ] Configure ESLint with security rules
+- [ ] Set up CI/CD pipeline with security scanning
+- [ ] Configure HTTPS for development environment
 
-### 1.2 Database Schema Design
-- Design user management tables
-- Design corpus management tables
-- Design vector store schema
-- Create database migration scripts
-- Set up seed data for development
+#### Day 3-4: Core Architecture
+- [ ] Implement secure API client with interceptors
+- [ ] Set up authentication context and hooks
+- [ ] Create protected route components
+- [ ] Implement token management utilities
+- [ ] Configure security headers
 
-### 1.3 Authentication Implementation
-- Implement NextAuth.js on frontend
-- Set up JWT authentication in FastAPI
-- Create user registration flow
-- Implement login/logout functionality
-- Add password recovery flow
+#### Day 5: UI Foundation
+- [ ] Set up theme with selected color scheme:
+  - Primary Background: #ffffff (White)
+  - Primary Text: #0f172a (Dark Blue/Black)
+  - Primary Accent: #0EA5E9 (Bright Blue)
+  - Secondary Accent: #06B6D4 (Teal)
+  - Tertiary/Neutral: #64748B (Gray)
+- [ ] Create base UI components with security considerations
+- [ ] Implement form validation utilities
 
-## Phase 2: Core RAG Components Migration (3 weeks)
+### Week 2: Authentication Implementation
 
-### 2.1 Vector Store Adaptation
-- Migrate from ChromaDB to pgvector
-- Implement multi-tenant vector storage
-- Create isolation between user corpora
-- Optimize vector search for performance
-- Implement backup and recovery strategies
+#### Day 1-2: Authentication UI
+- [ ] Create registration form with strong password validation
+- [ ] Implement login form with rate limiting
+- [ ] Design and implement password recovery flow
+- [ ] Add CAPTCHA integration for bot protection
 
-### 2.2 Corpus Processing Service
-- Adapt text processor for multi-user environment
-- Create asynchronous processing queue
-- Implement progress tracking for large uploads
-- Create corpus versioning system
-- Add validation and sanitization for user uploads
+#### Day 3-4: Authentication Backend Integration
+- [ ] Implement JWT authentication flow
+- [ ] Set up refresh token mechanism
+- [ ] Create secure session management
+- [ ] Implement role-based route protection
 
-### 2.3 Language Model Integration
-- Create abstraction layer for multiple LLM providers
-- Implement secure API key management
-- Create fallback strategies for API failures
-- Add streaming response support
-- Implement usage tracking and rate limiting
+#### Day 5: Security Testing & Bug Fixes
+- [ ] Conduct authentication penetration testing
+- [ ] Test for common authentication vulnerabilities
+- [ ] Fix identified security issues
+- [ ] Document authentication architecture
 
-## Phase 3: Frontend Development (3 weeks)
+## Phase 2: Core Features (Weeks 3-5)
 
-### 3.1 User Management UI
-- Create login and registration pages
-- Implement user profile management
-- Design account settings interface
-- Create password reset flows
-- Add user preferences management
+### Week 3: Feature Set 1
 
-### 3.2 Corpus Management UI
-- Design file upload interface
-- Create corpus statistics dashboard
-- Implement file management screens
-- Add corpus processing status indicators
-- Create corpus insights visualizations
+#### Day 1-5: [Feature Set 1 Components]
+- [ ] Implement UI components with proper authorization checks
+- [ ] Integrate with backend APIs with security headers
+- [ ] Add input validation and sanitization
+- [ ] Implement error boundaries
+- [ ] Create unit and integration tests
 
-### 3.3 Content Generation UI
-- Design intuitive content generation interface
-- Implement style adjustment controls
-- Create content history and favorites
-- Add export and sharing functionality
-- Implement real-time generation status
+### Week 4: Feature Set 2
 
-## Phase 4: Multi-Tenant Infrastructure (2 weeks)
+#### Day 1-5: [Feature Set 2 Components]
+- [ ] Implement UI components with proper authorization checks
+- [ ] Integrate with backend APIs with security headers
+- [ ] Add input validation and sanitization
+- [ ] Implement error boundaries
+- [ ] Create unit and integration tests
 
-### 4.1 User Isolation
-- Implement data partitioning
-- Create access control mechanisms
-- Add tenant-specific rate limiting
-- Implement resource allocation strategies
-- Create tenant usage analytics
+### Week 5: Feature Set 3 & Security Hardening
 
-### 4.2 Cloud Storage Integration
-- Set up S3 or similar storage service
-- Implement secure file upload/download
-- Create file management service
-- Add file validation and virus scanning
-- Implement file access permissions
+#### Day 1-3: [Feature Set 3 Components]
+- [ ] Implement UI components with proper authorization checks
+- [ ] Integrate with backend APIs with security headers
+- [ ] Add input validation and sanitization
 
-### 4.3 Multi-Version Support
-- Design version management system
-- Create version comparison interface
-- Implement version switching
-- Add version analytics
-- Create version backup/restore functionality
+#### Day 4-5: Security Audit & Hardening
+- [ ] Conduct comprehensive security review
+- [ ] Dependency vulnerability scanning
+- [ ] Fix identified security issues
+- [ ] Implement additional security measures as needed
 
-## Phase 5: Testing & Optimization (2 weeks)
+## Phase 3: Refinement & Launch (Weeks 6-8)
 
-### 5.1 Performance Testing
-- Conduct load testing
-- Implement performance optimizations
-- Benchmark and profile critical paths
-- Optimize database queries
-- Enhance caching strategies
+### Week 6: Performance Optimization & UX Refinement
 
-### 5.2 User Acceptance Testing
-- Recruit test users (teachers)
-- Create test scenarios
-- Collect and analyze feedback
-- Fix usability issues
-- Conduct accessibility testing
+#### Day 1-3: Performance Optimization
+- [ ] Code splitting and lazy loading
+- [ ] Image and asset optimization
+- [ ] API response caching
+- [ ] Bundle size analysis and optimization
 
-### 5.3 Security Review
-- Conduct security audit
-- Implement security recommendations
-- Test for common vulnerabilities
-- Review API security
-- Implement logging and monitoring
+#### Day 4-5: UX Refinement
+- [ ] Implement loading states and error feedback
+- [ ] Add micro-interactions and transitions
+- [ ] Enhance form validation feedback
+- [ ] Improve accessibility
 
-## Phase 6: Deployment & Launch (1 week)
+### Week 7: Testing & Bug Fixing
 
-### 6.1 Production Environment Setup
-- Configure production databases
-- Set up production API services
-- Configure monitoring and alerting
-- Implement backup strategies
-- Set up analytics tracking
+#### Day 1-2: Cross-Browser Testing
+- [ ] Test on Chrome, Firefox, Safari, Edge
+- [ ] Mobile browser testing
+- [ ] Fix browser-specific issues
 
-### 6.2 Deployment Automation
-- Finalize CI/CD pipelines
-- Create deployment scripts
-- Implement blue/green deployment
-- Configure auto-scaling
-- Set up rollback procedures
+#### Day 3-5: Security & Final Testing
+- [ ] Final security penetration testing
+- [ ] Fix remaining security issues
+- [ ] End-to-end testing of all flows
+- [ ] Performance testing under load
 
-### 6.3 Launch Preparation
-- Create user documentation
-- Develop onboarding materials
-- Prepare marketing materials
-- Set up support channels
-- Create launch communications
+### Week 8: Deployment & Monitoring Setup
 
-## Phase 7: Post-Launch Support & Iteration (Ongoing)
+#### Day 1-3: Deployment Preparation
+- [ ] Environment configuration
+- [ ] Database migration scripts
+- [ ] Deployment automation
+- [ ] Rollback procedures
 
-### 7.1 Monitoring & Support
-- Monitor system performance
-- Address user feedback
-- Fix reported bugs
-- Provide user support
-- Monitor usage patterns
+#### Day 4-5: Launch & Monitoring
+- [ ] Production deployment
+- [ ] Set up security monitoring
+- [ ] Configure error tracking
+- [ ] Implement analytics
+- [ ] Post-launch security audit
 
-### 7.2 Feature Iteration
-- Analyze usage data
-- Prioritize feature improvements
-- Implement high-priority enhancements
-- Conduct regular user interviews
-- Update product roadmap
+## Cursor Implementation Strategy
 
-## Timeline Summary
-- **Phase 1**: Architecture Design & Setup - 2 weeks
-- **Phase 2**: Core RAG Components Migration - 3 weeks
-- **Phase 3**: Frontend Development - 3 weeks
-- **Phase 4**: Multi-Tenant Infrastructure - 2 weeks
-- **Phase 5**: Testing & Optimization - 2 weeks
-- **Phase 6**: Deployment & Launch - 1 week
-- **Phase 7**: Post-Launch Support & Iteration - Ongoing
+### Working with Cursor for Each Component
 
-**Total time to MVP launch**: Approximately 13 weeks (3 months)
+For each component implementation in Cursor, follow this pattern:
+
+1. **Authentication Components** (First Priority)
+   ```
+   1. Define component and props with TypeScript
+   2. Implement security checks and validations
+   3. Create UI with selected color scheme
+   4. Add error handling and feedback
+   5. Write unit tests
+   ```
+
+2. **Core Utility Functions** (Second Priority)
+   ```
+   1. Define function signature with TypeScript
+   2. Implement security measures
+   3. Add comprehensive error handling
+   4. Write unit tests
+   ```
+
+3. **Feature Components** (After Authentication)
+   ```
+   1. Define component with authorization requirements
+   2. Implement UI with selected color scheme
+   3. Add API integration with security headers
+   4. Implement error boundaries
+   5. Add form validation if applicable
+   ```
+
+### Code Chunk Size Guidelines for Cursor
+
+- Keep individual files under 300 lines for optimal Cursor performance
+- Split complex components into sub-components
+- Group related functionality into logical modules
+- Use consistent naming conventions for security-related functions
+
+### Testing Strategy in Cursor
+
+- Implement unit tests alongside components
+- Create security-focused test cases
+- Test error handling extensively
+- Use mock data that follows security best practices
