@@ -1,0 +1,10 @@
+@import './animations.css';
+
+/* Add any other global styles here */
+body {
+  font-family: 'Inter', sans-serif;
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+/* Add more global styles as needed */
