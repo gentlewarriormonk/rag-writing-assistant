@@ -1,4 +1,5 @@
-// src/contexts/AuthContext.tsx
+'use client';
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   getUserFromToken, 
@@ -10,6 +11,7 @@ import {
 interface User {
   id: string;
   email: string;
+  name: string;
   role: 'user' | 'admin';
 }
 
@@ -20,7 +22,6 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  checkPermission: (requiredRole: 'user' | 'admin') => boolean;
 }
 
 interface AuthProviderProps {
@@ -40,12 +41,15 @@ export const useAuth = (): AuthContextType => {
 };
 
 // Auth Provider component
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Initialize auth state on component mount
   useEffect(() => {
+    // Only run on client
+    if (typeof window === 'undefined') return;
+    
     const initializeAuth = async () => {
       try {
         // Try to refresh the token
@@ -133,13 +137,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Permission check function
-  const checkPermission = (requiredRole: 'user' | 'admin'): boolean => {
-    if (!user) return false;
-    if (user.role === 'admin') return true; // Admin has all permissions
-    return user.role === requiredRole;
-  };
-
   // Provide context value
   const contextValue: AuthContextType = {
     user,
@@ -148,7 +145,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    checkPermission,
   };
 
   return (
@@ -156,6 +152,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export default AuthContext;
+export default AuthContext; 

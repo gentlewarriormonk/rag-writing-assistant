@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from '@/contexts/theme-context';
 import GrokButton from '../GrokButton';
-import { ThemeProvider } from '../../../context/ThemeContext';
 
 // Wrap components with ThemeProvider for testing
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -17,14 +17,16 @@ describe('GrokButton', () => {
   test('calls onClick when clicked', () => {
     const handleClick = jest.fn();
     renderWithTheme(<GrokButton onClick={handleClick}>Click me</GrokButton>);
-    fireEvent.click(screen.getByText('Click me'));
+    screen.getByText('Click me').click();
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
   test('displays loading spinner when isLoading is true', () => {
     renderWithTheme(<GrokButton isLoading>Loading</GrokButton>);
-    // Check for spinner presence (checking for the span with animate-spin class)
-    expect(screen.getByText('Loading').previousSibling).toHaveClass('animate-spin');
+    // Check for spinner presence by looking for the span with animate-spin class
+    const spinner = screen.getByText('Loading').parentElement?.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
+    expect(spinner).toHaveClass('animate-spin');
   });
 
   test('is disabled when disabled prop is true', () => {
@@ -36,8 +38,8 @@ describe('GrokButton', () => {
     const { rerender } = renderWithTheme(<GrokButton variant="primary">Primary</GrokButton>);
     let button = screen.getByText('Primary');
     
-    // Primary variant has specific style attributes
-    expect(button).toHaveStyle({ color: 'white' });
+    // Primary variant has text-white class
+    expect(button).toHaveClass('text-white');
     
     rerender(
       <ThemeProvider>
@@ -45,7 +47,7 @@ describe('GrokButton', () => {
       </ThemeProvider>
     );
     button = screen.getByText('Secondary');
-    expect(button).toHaveStyle({ color: 'white' });
+    expect(button).toHaveClass('text-white');
     
     rerender(
       <ThemeProvider>
@@ -53,6 +55,6 @@ describe('GrokButton', () => {
       </ThemeProvider>
     );
     button = screen.getByText('Outline');
-    expect(button).toHaveStyle({ backgroundColor: 'transparent' });
+    expect(button).toHaveClass('bg-transparent');
   });
 });

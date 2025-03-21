@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Montserrat, JetBrains_Mono } from 'next/font/google';
+import { Providers } from './providers';
 
 // Load fonts
 const inter = Inter({
@@ -32,12 +33,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${montserrat.variable} ${jetBrainsMono.variable} font-sans`}
+        suppressHydrationWarning
+        className={`${inter.variable} ${montserrat.variable} ${jetBrainsMono.variable} font-sans bg-[#121212] text-white`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
-} 
+}

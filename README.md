@@ -38,8 +38,22 @@ rag-writing-assistant/
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Run the development server: `npm run dev`
-4. Open [http://localhost:3000](http://localhost:3000)
+3. Create a `.env.local` file in the root directory with the following content:
+   ```
+   ANTHROPIC_API_KEY=your_api_key_here
+   JWT_SECRET=your_secret_key
+   ```
+4. Replace `your_api_key_here` with your actual Anthropic API key (or leave as-is to use mock responses)
+5. Run the development server: `npm run dev`
+6. Open [http://localhost:3000](http://localhost:3000)
+
+## API Configuration
+
+The application can work in two modes:
+- **Mock Mode**: Uses pre-defined responses (default if no API key is provided)
+- **API Mode**: Connects to Anthropic's Claude API for enhanced responses
+
+To use API mode, obtain an API key from [Anthropic's website](https://www.anthropic.com/) and add it to your `.env.local` file.
 
 ## Contributing
 

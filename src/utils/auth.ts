@@ -1,9 +1,10 @@
 // src/utils/auth.ts
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 interface User {
   id: string;
   email: string;
+  name: string;
   role: 'user' | 'admin';
 }
 
@@ -15,7 +16,9 @@ interface AuthTokens {
 interface CustomJwtPayload extends JwtPayload {
   userId: string;
   email: string;
+  name: string;
   role: string;
+  exp: number;
 }
 
 /**
@@ -81,6 +84,7 @@ export const getUserFromToken = (token: string): User | null => {
     return {
       id: decoded.userId,
       email: decoded.email,
+      name: decoded.name,
       role: decoded.role as 'user' | 'admin',
     };
   } catch (error) {
