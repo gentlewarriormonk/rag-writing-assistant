@@ -24,8 +24,14 @@ export default function ChatInput({ onSendMessage, isLoading }: ChatInputProps) 
   // Handle text area height based on content
   useEffect(() => {
     if (inputRef.current) {
+      // Reset height to auto to accurately calculate scroll height
       inputRef.current.style.height = 'auto';
-      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+      
+      // Calculate new height based on content, with a maximum of around 10 rows
+      const maxHeight = 240; // Approximately 10 rows at 24px per row
+      const newHeight = Math.min(inputRef.current.scrollHeight, maxHeight);
+      
+      inputRef.current.style.height = `${newHeight}px`;
     }
   }, [message]);
 
@@ -37,33 +43,28 @@ export default function ChatInput({ onSendMessage, isLoading }: ChatInputProps) 
     await onSendMessage(message);
     setMessage('');
     
-    // Reset height
+    // Reset height to 2 rows after sending
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
     }
   };
 
+  // Handle input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="relative">
-      {isFirstTimeUser && !isCorpusReady && (
-        <div className="bg-[#0077b6]/20 text-white rounded-lg p-3 mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-sm">
-              You haven't uploaded any writing samples yet. Upload samples to get responses in your style.
-            </p>
-          </div>
-          <FileUploadButton />
-        </div>
-      )}
-      
-      <div className="relative flex items-end bg-[#2d3748] rounded-lg border border-gray-700 focus-within:border-[#00a8e8] transition-colors">
+      <div className="relative flex items-end bg-[#2e2e2e] rounded-lg border border-gray-700 focus-within:border-[#00a8e8] focus-within:shadow-[0_0_0_1px_rgba(0,168,232,0.3)] hover:border-blue-500/50 transition-colors max-w-[85%] mx-auto">
         <textarea
           ref={inputRef}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Send a message..."
-          className="w-full resize-none px-4 py-3 max-h-[200px] bg-transparent text-white focus:outline-none focus:ring-0"
-          rows={1}
+          className="w-full resize-none px-4 py-3 bg-transparent text-white focus:outline-none focus:ring-0 overflow-y-auto"
+          rows={2} // Start with 2 rows
+          maxLength={5000} // Set a reasonable character limit
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -71,12 +72,16 @@ export default function ChatInput({ onSendMessage, isLoading }: ChatInputProps) 
             }
           }}
           disabled={isLoading}
+          style={{ 
+            minHeight: '60px', // About 2 rows
+            maxHeight: '192px'  // About 8 rows (reduced from 10)
+          }}
         />
         
         <button
           type="submit"
           className={`
-            px-4 py-3 rounded-lg 
+            px-4 py-3 rounded-lg self-end
             ${isLoading || !message.trim() 
               ? 'text-gray-500 cursor-not-allowed' 
               : 'text-[#00a8e8] hover:text-white'}

@@ -13,7 +13,7 @@ export interface Message {
   isLoading?: boolean;
 }
 
-interface Conversation {
+export interface Conversation {
   id: string;
   title: string;
   messages: Message[];
@@ -31,6 +31,7 @@ interface ChatContextType {
   deleteConversation: (id: string) => Promise<void>;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
 }
 
 const ChatContext = createContext<ChatContextType>({
@@ -43,6 +44,7 @@ const ChatContext = createContext<ChatContextType>({
   deleteConversation: async () => {},
   isSidebarOpen: false,
   toggleSidebar: () => {},
+  setConversations: () => {},
 });
 
 export const useChat = () => useContext(ChatContext);
@@ -59,13 +61,24 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const newConvo: Conversation = {
       id: generateId(),
       title: 'New Conversation',
-      messages: [],
+      messages: [{
+        id: '1',
+        role: 'assistant',
+        content: "Hello! I'm your AI writing assistant. How can I help you today?",
+        timestamp: new Date().toISOString(),
+      }],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     
+    // Update state with new conversation
     setConversation(newConvo);
-    setConversations(prev => [newConvo, ...prev]);
+    setConversations(prev => {
+      const updated = [newConvo, ...prev];
+      // Save to localStorage
+      localStorage.setItem('conversations', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // Load conversations on mount
@@ -256,6 +269,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         deleteConversation,
         isSidebarOpen,
         toggleSidebar,
+        setConversations,
       }}
     >
       {children}

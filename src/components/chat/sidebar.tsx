@@ -6,21 +6,32 @@ import { useTheme } from '@/contexts/theme-context';
 import { useAuth } from '@/contexts/supabase-auth-context';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onMouseLeave?: (e: React.MouseEvent) => void;
+  onLockToggle?: (locked: boolean) => void;
+  isLocked?: boolean;
 }
 
-export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }: SidebarProps) {
+export default function Sidebar({ 
+  isOpen, 
+  onClose, 
+  onMouseEnter, 
+  onMouseLeave,
+  onLockToggle,
+  isLocked = false
+}: SidebarProps) {
   const { conversation, conversations, newConversation, loadConversation, deleteConversation } = useChat();
   const { toggleDarkMode, isDarkMode } = useTheme();
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   // Preserve selected tab in state even when the sidebar is closed
-  const [activeTab, setActiveTab] = useState<'chats' | 'projects'>('chats');
+  const [activeTab, setActiveTab] = useState<'chats' | 'voices'>('chats');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const formatDate = (dateString: string) => {
@@ -48,9 +59,17 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
   };
 
   // Stop event propagation on tab clicks to prevent panel from closing
-  const handleTabClick = (e: React.MouseEvent, tab: 'chats' | 'projects') => {
+  const handleTabClick = (e: React.MouseEvent, tab: 'chats' | 'voices') => {
     e.stopPropagation();
     setActiveTab(tab);
+  };
+
+  // Handler for locking/unlocking the sidebar
+  const toggleLock = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onLockToggle) {
+      onLockToggle(!isLocked);
+    }
   };
 
   return (
@@ -64,24 +83,46 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
       className="fixed inset-y-0 left-0 w-64 bg-blue-900/10 backdrop-blur-sm border-r border-gray-800/50 z-10 flex flex-col h-full shadow-xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling up
+      onClick={(e) => {
+        e.stopPropagation(); // Ensure clicks don't bubble up 
+      }}
     >
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top section with Projects link */}
-        <div className="pt-4 px-3 pb-3 border-b border-gray-800/30">
+        {/* Top section with Voices link and lock button */}
+        <div className="pt-4 px-3 pb-3 border-b border-gray-800/30 flex justify-between items-center">
           <Link 
-            href="/projects"
+            href="/voices"
             className="flex items-center px-2 py-1.5 rounded-md text-gray-200 hover:bg-blue-800/20"
           >
             <svg className="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
-            Projects
+            Voices
           </Link>
+          
+          {/* Lock/Unlock button */}
+          <button
+            onClick={toggleLock}
+            className={`p-1.5 rounded-full ${
+              isLocked 
+                ? 'text-blue-400 bg-blue-400/10' 
+                : 'text-gray-400 hover:text-blue-400 hover:bg-gray-800/40'
+            }`}
+            aria-label={isLocked ? "Unlock sidebar" : "Lock sidebar open"}
+          >
+            <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              {isLocked ? (
+                <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0010 5.5V9H3a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2h-1.5V5.5a3 3 0 116 0v2.75a.75.75 0 001.5 0V5.5A4.5 4.5 0 0014.5 1z" clipRule="evenodd" />
+              ) : (
+                <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
+              )}
+            </svg>
+          </button>
         </div>
 
-        {/* New Chat Button */}
-        <div className="px-3 py-3">
+        {/* Navigation Section */}
+        <div className="px-3 py-3 space-y-2">
+          {/* New Chat Button */}
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -94,8 +135,23 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
             </svg>
             Start New Chat
           </button>
-        </div>
 
+          {/* Your Writing Samples Link */}
+          <Link 
+            href="/samples"
+            className="w-full bg-[#2e2e2e] hover:bg-[#3e3e3e] text-white py-2 px-3 rounded-md text-sm flex items-center justify-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push('/samples');
+            }}
+          >
+            <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Your Writing Samples
+          </Link>
+        </div>
+        
         {/* Tabs */}
         <div className="px-3 pt-1 pb-2 flex space-x-1">
           <button
@@ -109,9 +165,9 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
             Recent Chats
           </button>
           <button
-            onClick={(e) => handleTabClick(e, 'projects')}
+            onClick={(e) => handleTabClick(e, 'voices')}
             className={`flex-1 text-xs py-1.5 px-2 rounded-md ${
-              activeTab === 'projects' 
+              activeTab === 'voices' 
                 ? 'bg-blue-800/40 text-white font-medium' 
                 : 'text-gray-300 hover:bg-blue-800/20'
             }`}
@@ -120,7 +176,7 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
           </button>
         </div>
         
-        {/* Chat/Project Lists */}
+        {/* Chat/Voices Lists */}
         <div className="flex-1 overflow-y-auto px-3 py-2">
           {activeTab === 'chats' && (
             <div className="space-y-1">
@@ -202,7 +258,7 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
             </div>
           )}
           
-          {activeTab === 'projects' && (
+          {activeTab === 'voices' && (
             <div className="space-y-1">
               <div className="text-center py-6 text-gray-500 text-sm">
                 No starred chats yet
@@ -214,11 +270,26 @@ export default function Sidebar({ isOpen, onClose, onMouseEnter, onMouseLeave }:
       </div>
       
       {/* Settings at the bottom */}
-      <div className="mt-auto border-t border-gray-800/30 p-3">
+      <div className="mt-auto space-y-2 border-t border-gray-800/30 p-3">
+        {/* Upgrade to Pro button */}
+        <Link
+          href="/pricing"
+          className="w-full flex items-center justify-center py-2 px-3 rounded-md bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-medium hover:from-blue-500 hover:to-blue-400 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push('/pricing');
+          }}
+        >
+          <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Upgrade to Pro
+        </Link>
+        
         <button
           onClick={(e) => {
             e.stopPropagation();
-            // Open settings section
+            router.push('/settings');
           }}
           className="w-full flex items-center px-3 py-2 rounded-md text-gray-300 hover:bg-gray-800/40"
         >

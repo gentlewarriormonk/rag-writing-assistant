@@ -1,0 +1,29 @@
+.sidebar {
+  /* existing styles */
+}
+
+.newChatButton {
+  width: 100%;
+  background-color: #1d4ed8; /* bg-blue-700 */
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.2s;
+}
+
+.newChatButton:hover {
+  background-color: #2563eb; /* bg-blue-600 */
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* existing styles */ 

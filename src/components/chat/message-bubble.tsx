@@ -6,9 +6,10 @@ import { useTheme } from '@/contexts/theme-context';
 
 interface MessageBubbleProps {
   message: Message;
+  isLoading?: boolean;
 }
 
-export default function MessageBubble({ message }: MessageBubbleProps) {
+export default function MessageBubble({ message, isLoading = false }: MessageBubbleProps) {
   const { colors } = useTheme();
   const isUser = message.role === 'user';
 
@@ -21,10 +22,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             ? 'bg-[#0077b6] text-white' 
             : 'bg-[#1e1e1e] text-white border border-gray-800'
           }
-          ${message.isLoading ? 'opacity-70' : ''}
+          ${isLoading ? 'opacity-70' : ''}
         `}
       >
-        {message.isLoading ? (
+        {isLoading ? (
           <div className="h-6 w-6 flex items-center justify-center">
             <div className="animate-pulse h-2 w-2 bg-gray-400 rounded-full"></div>
           </div>

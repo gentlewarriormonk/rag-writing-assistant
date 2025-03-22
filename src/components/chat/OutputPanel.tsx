@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
@@ -15,22 +15,56 @@ interface OutputPanelProps {
   documents: DocumentOutput[];
   isVisible: boolean;
   onClose?: () => void;
+  selectedDocId?: string | null;
+  onSelectDocument?: (docId: string | null) => void;
 }
 
-export default function OutputPanel({ documents, isVisible, onClose }: OutputPanelProps) {
-  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+export default function OutputPanel({ 
+  documents, 
+  isVisible, 
+  onClose,
+  selectedDocId: externalSelectedDocId,
+  onSelectDocument
+}: OutputPanelProps) {
+  const [internalSelectedDocId, setInternalSelectedDocId] = useState<string | null>(null);
+  const [showDocumentList, setShowDocumentList] = useState(true);
 
-  // Select the first document automatically when panel becomes visible
-  React.useEffect(() => {
-    if (isVisible && documents.length > 0 && !selectedDocId) {
-      setSelectedDocId(documents[0].id);
+  // Use external or internal selected doc ID
+  const selectedDocId = externalSelectedDocId ?? internalSelectedDocId;
+  const setSelectedDocId = (docId: string | null) => {
+    if (onSelectDocument) {
+      onSelectDocument(docId);
+    } else {
+      setInternalSelectedDocId(docId);
+    }
+  };
+
+  // Auto-select the first document when panel becomes visible and there's only one document
+  useEffect(() => {
+    if (isVisible && documents.length > 0) {
+      if (documents.length === 1 || !selectedDocId) {
+        setSelectedDocId(documents[0].id);
+        setShowDocumentList(documents.length > 1);
+      }
     }
     
     // Reset selection when panel closes
     if (!isVisible) {
       setSelectedDocId(null);
+      setShowDocumentList(true);
     }
   }, [isVisible, documents, selectedDocId]);
+
+  // When a new document is added, select it automatically
+  useEffect(() => {
+    if (documents.length > 0) {
+      const lastDoc = documents[documents.length - 1];
+      if (lastDoc && (!selectedDocId || !documents.find(d => d.id === selectedDocId))) {
+        setSelectedDocId(lastDoc.id);
+        setShowDocumentList(documents.length > 1);
+      }
+    }
+  }, [documents, selectedDocId]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -52,9 +86,16 @@ export default function OutputPanel({ documents, isVisible, onClose }: OutputPan
     document.body.removeChild(element);
   };
 
+  // Handler for closing the panel
   const handleClose = () => {
-    setSelectedDocId(null);
     if (onClose) onClose();
+  };
+  
+  // Handler for going back to document list
+  const handleBackToList = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedDocId(null);
+    setShowDocumentList(true);
   };
 
   const selectedDoc = documents.find(doc => doc.id === selectedDocId);
@@ -67,24 +108,41 @@ export default function OutputPanel({ documents, isVisible, onClose }: OutputPan
         opacity: isVisible ? 1 : 0
       }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed right-0 top-0 bottom-0 w-80 bg-[#1e1e1e] border-l border-gray-800/50 z-20 flex flex-col shadow-xl"
+      className="fixed right-0 top-0 bottom-0 w-80 bg-[#252525] border-l border-gray-800/50 z-20 flex flex-col shadow-xl"
       style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
       <div className="border-b border-gray-800/50 p-3 flex justify-between items-center">
-        <h2 className="font-medium text-sm text-gray-200">Documents</h2>
-        <button 
-          onClick={handleClose}
-          className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/30"
-          aria-label="Close panel"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
+        <h2 className="font-medium text-sm text-gray-200">
+          {showDocumentList ? "Documents" : selectedDoc?.title || "Document"}
+        </h2>
+        <div className="flex items-center space-x-2">
+          {!showDocumentList && documents.length > 1 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={handleBackToList}
+              aria-label="Back to document list"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </Button>
+          )}
+          <button 
+            onClick={handleClose}
+            className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/30"
+            aria-label="Close panel"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {selectedDocId === null ? (
-        // Document cards view
+      {showDocumentList ? (
+        // Document cards view in a grid layout
         <div className="flex-1 p-3 overflow-y-auto">
           {documents.length === 0 ? (
             <div className="flex items-center justify-center h-full">
@@ -93,18 +151,21 @@ export default function OutputPanel({ documents, isVisible, onClose }: OutputPan
               </p>
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {documents.map((doc) => (
                 <div 
                   key={doc.id}
-                  onClick={() => setSelectedDocId(doc.id)}
-                  className="bg-[#252525] rounded-lg border border-gray-800 p-3 cursor-pointer hover:border-blue-500/50 transition-colors"
+                  onClick={() => {
+                    setSelectedDocId(doc.id);
+                    setShowDocumentList(false);
+                  }}
+                  className="bg-[#2e2e2e] rounded-lg border border-gray-800 p-3 cursor-pointer hover:border-blue-500/50 transition-colors"
                 >
                   <h3 className="font-medium text-sm mb-1">{doc.title || 'Untitled'}</h3>
                   <p className="text-xs text-gray-400 mb-2">
-                    {doc.createdAt.toLocaleDateString()}
+                    {new Date(doc.createdAt).toLocaleDateString()}
                   </p>
-                  <div className="bg-[#1e1e1e] rounded p-2 mb-2 text-xs text-gray-300 max-h-20 overflow-hidden">
+                  <div className="bg-[#252525] rounded p-2 mb-2 text-xs text-gray-300 max-h-20 overflow-hidden">
                     {doc.content.substring(0, 100)}
                     {doc.content.length > 100 ? '...' : ''}
                   </div>
@@ -116,6 +177,7 @@ export default function OutputPanel({ documents, isVisible, onClose }: OutputPan
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedDocId(doc.id);
+                        setShowDocumentList(false);
                       }}
                     >
                       Open
@@ -129,27 +191,7 @@ export default function OutputPanel({ documents, isVisible, onClose }: OutputPan
       ) : (
         // Selected document view
         <div className="flex-1 flex flex-col p-3 overflow-hidden">
-          <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-800/30">
-            <div>
-              <h3 className="font-medium text-sm text-gray-200">{selectedDoc?.title || 'Untitled'}</h3>
-              <span className="text-xs text-gray-500">
-                Created: {selectedDoc?.createdAt.toLocaleDateString()}
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setSelectedDocId(null)}
-              aria-label="Back to document list"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-            </Button>
-          </div>
-          
-          <div className="flex-1 overflow-auto mb-3 bg-[#252525] rounded border border-gray-800 p-4">
+          <div className="flex-1 overflow-auto mb-3 bg-[#2e2e2e] rounded border border-gray-800 p-4">
             <pre className="font-['Georgia',serif] text-sm leading-relaxed text-gray-200 whitespace-pre-wrap">
               {selectedDoc?.content}
             </pre>
