@@ -11,7 +11,7 @@ export function LoginForm() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,23 +35,23 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="w-full max-w-md mx-auto p-6 space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-bold">Welcome Back</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Sign in to your account
-        </p>
-      </div>
-
+            Sign in to your account
+          </p>
+        </div>
+        
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/10 rounded-md">
             {error}
           </div>
         )}
-
+        
         <div className="space-y-2">
           <label
             htmlFor="email"
@@ -59,15 +59,15 @@ export function LoginForm() {
           >
             Email
           </label>
-          <input
+              <input
             id="email"
-            name="email"
-            type="email"
-            required
+                name="email"
+                type="email"
+                required
             className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800"
             placeholder="you@example.com"
-          />
-        </div>
+              />
+            </div>
 
         <div className="space-y-2">
           <label
@@ -76,25 +76,25 @@ export function LoginForm() {
           >
             Password
           </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
             className="w-full px-3 py-2 border rounded-md dark:border-gray-700 dark:bg-gray-800"
             placeholder="••••••••"
           />
-        </div>
+          </div>
 
         <Button
-          type="submit"
+              type="submit"
           className="w-full"
-          disabled={isLoading}
+              disabled={isLoading}
           loading={isLoading}
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Signing in...' : 'Sign in'}
         </Button>
-      </form>
+        </form>
     </div>
   );
 }
