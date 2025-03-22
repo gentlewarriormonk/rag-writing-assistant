@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { CorpusProvider } from '@/contexts/corpus-context';
-import { AuthProvider } from '@/contexts/auth-context';
+import { AuthProvider } from '@/contexts/supabase-auth-context'; // <-- Updated import
 import { ChatProvider } from '@/contexts/chat-context';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -30,4 +30,4 @@ export function Providers({ children }: { children: React.ReactNode }) {
       </ThemeProvider>
     </AuthProvider>
   );
-} 
+}
