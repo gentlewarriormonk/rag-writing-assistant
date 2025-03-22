@@ -4,17 +4,17 @@ import Image from 'next/image';
 
 const Navbar = () => {
   return (
-    <header className="bg-white border-b border-light-gray">
+    <header className="bg-[#1e1e1e] border-b border-gray-800">
       <div className="px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and brand name */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-primary-blue rounded-md flex items-center justify-center">
-                <span className="text-white font-bold">R</span>
+              <div className="h-8 w-8 bg-gradient-to-br from-[#0077b6] to-[#00a8e8] rounded-md flex items-center justify-center">
+                <span className="text-white font-bold">書</span>
               </div>
-              <span className="text-xl font-heading font-bold text-primary-blue">
-                RAGWriter
+              <span className="text-xl font-heading font-bold bg-gradient-to-r from-[#0077b6] to-[#00a8e8] text-transparent bg-clip-text">
+                Kaku
               </span>
             </Link>
           </div>
@@ -31,8 +31,8 @@ const Navbar = () => {
           {/* User menu */}
           <div className="flex items-center">
             <div className="relative">
-              <button className="flex items-center space-x-1 text-dark-gray hover:text-primary-blue">
-                <div className="h-8 w-8 rounded-full bg-light-gray flex items-center justify-center text-sm font-medium">
+              <button className="flex items-center space-x-1 text-gray-300 hover:text-[#00a8e8] transition-colors">
+                <div className="h-8 w-8 rounded-full bg-[#2a2a2a] flex items-center justify-center text-sm font-medium">
                   US
                 </div>
                 <span className="hidden md:inline-block">User</span>
@@ -57,7 +57,7 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            <button className="text-dark-gray hover:text-primary-blue">
+            <button className="text-gray-300 hover:text-[#00a8e8] transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -94,10 +94,10 @@ const NavLink = ({
   return (
     <Link
       href={href}
-      className={`text-sm font-medium hover:text-primary-blue ${
+      className={`text-sm font-medium transition-colors hover:text-[#00a8e8] ${
         isActive
-          ? 'text-primary-blue border-b-2 border-primary-blue'
-          : 'text-dark-gray'
+          ? 'text-[#00a8e8] border-b-2 border-[#00a8e8]'
+          : 'text-gray-300'
       }`}
     >
       {children}

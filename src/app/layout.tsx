@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { Inter, Montserrat, JetBrains_Mono } from 'next/font/google';
 import { Providers } from './providers';
 
@@ -23,7 +23,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'RAG Writing Assistant',
+  title: 'Kaku - AI Writing Assistant',
   description: 'Generate content in your authentic writing style',
 };
 

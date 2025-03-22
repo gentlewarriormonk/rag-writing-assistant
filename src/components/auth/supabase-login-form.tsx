@@ -123,4 +123,52 @@ export function SupabaseLoginForm() {
             <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-[#1e1e1e] px-2 text-gray-400">or
+            <span className="bg-[#1e1e1e] px-2 text-gray-400">or</span>
+          </div>
+        </div>
+        
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-400">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 shadow-sm focus:border-[#00a8e8] focus:ring-[#00a8e8] sm:text-sm px-4 py-2"
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-400">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 shadow-sm focus:border-[#00a8e8] focus:ring-[#00a8e8] sm:text-sm px-4 py-2"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full"
+        >
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </Button>
+      </form>
+    </div>
+  );
+}

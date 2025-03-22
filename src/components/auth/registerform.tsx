@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/auth-provider';
+import { useAuth } from '@/contexts/supabase-auth-context';
 import { Button } from '@/components/ui/button';
 
 export function RegisterForm() {

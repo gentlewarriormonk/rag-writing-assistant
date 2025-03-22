@@ -1,45 +1,47 @@
 // src/components/ProtectedRoute.tsx
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+'use client';
+
+import { FC, ReactNode, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth, UserRole } from '@/contexts/supabase-auth-context';
+import { Spinner } from './ui/spinner';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requiredRole?: 'user' | 'admin';
+  children: ReactNode;
+  requiredRole?: UserRole;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requiredRole = 'user' 
-}) => {
-  const { isAuthenticated, checkPermission, isLoading } = useAuth();
-  const location = useLocation();
+const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
+  const { isAuthenticated, isLoading, checkPermission } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Show loading indicator while checking authentication
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      // Redirect to login with the current path as the return URL
+      router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`);
+    } else if (!isLoading && isAuthenticated && requiredRole && !checkPermission(requiredRole)) {
+      // User doesn't have the required role, redirect to dashboard
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, isLoading, requiredRole, router, pathname, checkPermission]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
+        <Spinner size="lg" />
       </div>
     );
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    // Save the location the user was trying to access for redirection after login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // Show children only if authenticated and has the required role (if any)
+  if (isAuthenticated && (!requiredRole || checkPermission(requiredRole))) {
+    return <>{children}</>;
   }
 
-  // Check permissions based on required role
-  const hasRequiredPermission = checkPermission(requiredRole);
-  
-  if (!hasRequiredPermission) {
-    // Redirect to unauthorized page if the user doesn't have required permissions
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  // Render children if authenticated and authorized
-  return <>{children}</>;
+  // Don't render anything if not authenticated or missing required role
+  // The useEffect will handle the redirect
+  return null;
 };
 
 export default ProtectedRoute;

@@ -1,0 +1,3 @@
+// This file was causing conflicts with SWC and Next.js font loading.
+// Removing the custom configuration to let Next.js use its default SWC compiler.
+{} 
