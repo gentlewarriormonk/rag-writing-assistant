@@ -1,108 +1,136 @@
-# Revised Product Requirements Document
+# RAG Writing Assistant: Product Requirements Document
 
 ## 1. Product Overview
 
 ### Purpose
-Create a secure, user-friendly application that addresses [core business need] while maintaining high security standards and optimal performance.
+Create a secure, user-friendly web application that allows users to generate content in their authentic writing style using Retrieval-Augmented Generation (RAG) technology. The application enables users to upload their corpus of writing, generate new content based on that corpus, and modify/export the results.
 
 ### Target Audience
-- Primary: [Define primary users]
-- Secondary: [Define secondary users]
-- Stakeholders: [List key stakeholders]
+- **Primary**: Corporate communications teams, marketing agencies, legal professionals, professional writers
+- **Secondary**: Educational institutions, HR departments, content creators
+- **Stakeholders**: Development team, product management, security team
 
 ### Success Metrics
 - User adoption rate of 30% within first 3 months
 - Security compliance with zero critical vulnerabilities
 - User satisfaction rating above 4.5/5
-- Reduced support tickets related to usability issues
+- Average content generation time under 30 seconds
 
 ## 2. User Experience Requirements
 
 ### Visual Design
-- **Color Scheme**: 
-  - Primary Background: #ffffff (White)
-  - Primary Text: #0f172a (Dark Blue/Black)
-  - Primary Accent: #0EA5E9 (Bright Blue)
-  - Secondary Accent: #06B6D4 (Teal)
-  - Tertiary/Neutral: #64748B (Gray)
 - **Typography**: Inter font family throughout
-- **Design System**: Follow Material Design or custom component system
 - **Responsiveness**: Fully responsive from mobile (320px) to desktop (1920px+)
+- **Note**: Color scheme defined in separate design system document
 
 ### User Flows
 
 #### Authentication Flow
 1. **Registration**
    - Email/password registration with strong password requirements
-   - Email verification required
-   - CAPTCHA protection against bots
-   - Social login options
+   - Email verification required via one-click verification link
+   - Alternative social login options (Google, GitHub)
 
 2. **Login Process**
    - Email/password login
-   - Social login options
-   - "Remember me" functionality
+   - Social login options (Google, GitHub)
+   - "Remember me" functionality (30-day refresh tokens)
    - Password recovery flow
-   - Optional MFA (Multi-Factor Authentication)
+   - JWT-based authentication with 1-hour access tokens
 
 3. **Account Management**
    - Password change
    - Profile information update
-   - Account deletion option
-   - Session management (view/revoke active sessions)
+   - Account deletion option (right to be forgotten)
+   - View login history
+   - Simple logout procedure
 
 #### Core Application Flows
-1. **[Core Flow 1]**
-   - Step-by-step breakdown with security considerations
-   - Permission requirements at each step
+1. **Dashboard Navigation**
+   - Overview metrics display
+   - Sidebar navigation to different sections
+   - Access to profile, settings, content sections
+   - Logout functionality
 
-2. **[Core Flow 2]**
-   - Step-by-step breakdown with security considerations
-   - Permission requirements at each step
+2. **Corpus Management**
+   - Upload text documents (.txt, .docx, .pdf)
+   - View uploaded corpus items
+   - Delete or replace corpus items
+   - Process corpus to extract writing style
+
+3. **Content Generation**
+   - Select content format type (see detailed list below)
+   - Choose tone/formality adjustment (see detailed list below)
+   - Input content topic or prompt
+   - Generate content based on corpus
+   - Edit generated content
+   - Save, download, or share content
 
 ## 3. Feature Requirements
 
 ### MVP (Must-Have) Features
+
 1. **Secure User Authentication**
-   - Registration, login, password recovery
+   - Email/social login registration with email verification
+   - JWT-based authentication with proper token management
    - Role-based access control
-   - Session management
+   - Session management with proper timeout
 
-2. **[Core Feature 1]**
-   - Detailed requirements
-   - Security considerations
-   - Success criteria
+2. **Personal Writing Corpus Management**
+   - Upload interface with drag-and-drop functionality
+   - Support for .txt, .docx, and .pdf file formats
+   - Storage management with reasonable limits (e.g., 100MB per user)
+   - Corpus processing system to extract writing style patterns
 
-3. **[Core Feature 2]**
-   - Detailed requirements
-   - Security considerations
-   - Success criteria
+3. **Content Generation Engine**
+   - RAG-based content generation using user's corpus
+   - Content prompt interface
+   - Generation controls (length, topic focus)
+   - Processing indicator with reasonable timeout
+
+4. **Content Management**
+   - Rich text editor for modifying generated content
+   - Save drafts functionality
+   - Export options (.txt, .docx, .pdf)
+   - Content history with basic versioning
+
+5. **Tone and Format Options**
+   - **Tone/Formality Adjustments:**
+     - Formal - Professional, structured language suitable for business communications
+     - Conversational - Relaxed, natural language as if speaking directly to the reader
+     - Technical - Precise, detailed language with appropriate terminology
+     - Persuasive - Compelling language focused on convincing the reader
+     - Concise - Brief, direct language that minimizes word count
+   
+   - **Content Format Types:**
+     - Email - Standard business email format with appropriate sections
+     - Article/Blog Post - Longer-form content with proper structure
+     - Social Media Post - Brief, engaging content optimized for social platforms
+     - Memo/Report - Structured internal business communication
+     - Presentation Script - Content formatted for verbal delivery
 
 ### Post-MVP Features (Prioritized)
-1. **[Feature 1]**
-   - Requirements and rationale
-   - Security implications
+1. **Multiple Style Profiles**
+   - Create different profiles for various writing contexts
+   - Switch between profiles when generating content
 
-2. **[Feature 2]**
-   - Requirements and rationale
-   - Security implications
+2. **Voice Input for Corpus Creation**
+   - Record spoken content for corpus building
+   - Transcription with editing capabilities
+   - Voice profile management
 
-### Features Being Cut/Deprioritized
-1. **[Cut Feature 1]**
-   - Rationale for cutting
-   - Potential future implementation conditions
+3. **Collaborative Features**
+   - Team accounts with shared corpus
+   - Collaborative editing
+   - Comment and review functionality
 
-2. **[Cut Feature 2]**
-   - Rationale for cutting
-   - Potential future implementation conditions
-
-## 4. Technical Requirements
+### Performance
 
 ### Performance
 - Page load time under 2 seconds
-- API response time under 500ms
-- Smooth animations (60fps)
-- Optimized asset loading
+- Content generation response time under 30 seconds
+- Corpus processing time under 5 minutes for 100 pages
+- Support for at least 50 concurrent users in MVP
 
 ### Security Requirements
 - HTTPS for all communications
@@ -117,60 +145,44 @@ Create a secure, user-friendly application that addresses [core business need] w
 - Mobile OS: iOS 14+, Android 10+
 - Accessibility: WCAG 2.1 AA compliance
 
-### Integration Requirements
-- [List external systems to integrate with]
-- Secure API communication patterns
-- Rate limiting and throttling
-
 ## 5. Data Requirements
 
 ### Data Models
-- User data model
-- [Other core data models]
-- Data relationships and constraints
+- User data (account information, settings)
+- Corpus data (uploaded documents, processed text features)
+- Generated content (drafts, published content)
+- Application settings and preferences
 
 ### Data Security
-- PII handling guidelines
-- Data retention policies
+- PII handling with proper encryption
+- Data isolation between users
 - Backup and recovery procedures
-- Data minimization principles
+- Data deletion on account termination
 
-### Analytics and Monitoring
-- User behavior tracking requirements
-- Security monitoring requirements
-- Performance monitoring requirements
-
-## 6. Compliance Requirements
-
-- GDPR compliance measures
-- [Other relevant regulations]
-- Regular compliance audits
-- Privacy policy requirements
-
-## 7. Timeline and Milestones
+## 6. Timeline and Milestones
 
 ### Phase 1: Authentication & Core Architecture (Weeks 1-2)
 - Complete security architecture
 - Implement authentication system
-- Set up security monitoring
+- Set up document storage infrastructure
 
 ### Phase 2: Core Features (Weeks 3-5)
-- Implement [Core Feature 1]
-- Implement [Core Feature 2]
-- Security testing of core features
+- Implement corpus management
+- Develop RAG content generation engine
+- Create content editing and export functionality
 
 ### Phase 3: Refinement & Launch (Weeks 6-8)
+- Implement tone adjustment and format options
 - UI/UX refinement
 - Performance optimization
 - Final security audit
-- Controlled release
 
-## 8. Success Criteria & Testing
+## 7. Success Criteria & Testing
 
 ### Functional Testing Requirements
 - Test cases for all user flows
-- Edge case testing
-- Cross-browser testing
+- Content generation quality assessment
+- Performance testing under realistic conditions
 
 ### Security Testing Requirements
 - Authentication penetration testing
