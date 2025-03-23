@@ -3,10 +3,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '@/contexts/chat-context';
 import { useTheme } from '@/contexts/theme-context';
+import { useCorpus } from '@/contexts/corpus-context';
 import MessageBubble from './message-bubble';
 import ChatInput from './chat-input';
 import ThinkingIndicator from '@/components/ui/ThinkingIndicator';
-import Sidebar from './sidebar';
+import Sidebar from './Sidebar';
 import OutputPanel from './OutputPanel';
 import { useAuth } from '@/contexts/supabase-auth-context';
 import { Button } from '@/components/ui/button';
@@ -22,10 +23,10 @@ interface DocumentOutput {
 
 // Demo responses to simulate AI interaction
 const demoResponses: Record<string, string> = {
-  default: "I'm your AI writing assistant. How can I help you today?",
-  greeting: "Hello! I'm here to help with your writing needs. Would you like me to help you draft something, revise existing text, or generate ideas?",
-  help: "I can help you with various writing tasks like drafting emails, blog posts, essays, or creative content. Just let me know what you'd like to work on!",
-  demo: "This is a demo of Kaku, your AI writing assistant. In the full version, I can help you create content that matches your writing style by learning from your previous work.",
+  default: "Hi there! I'm Kaku, your friendly AI writing assistant. I can help you create content that sounds just like you wrote it! To get started, just tell me what you'd like to write today. The more writing samples you upload, the better I can match your unique style!",
+  greeting: "Hi there! I'm Kaku, your friendly AI writing assistant. I can help you create content that sounds just like you wrote it! To get started, just tell me what you'd like to write today.",
+  help: "I'm Kaku, and I can help you with various writing tasks like drafting emails, blog posts, essays, or creative content. Just let me know what you'd like to work on! For the best results, upload some of your writing samples so I can match your unique style and tone.",
+  demo: "This is a demo of Kaku, your AI writing assistant. In the full version, I can help you create content that matches your writing style by learning from your previous work. I can adapt to your tone, vocabulary, and sentence structure to create content that sounds authentically you!",
   rewrite: "I've analyzed your text and here's a rewritten version that maintains your style but improves clarity:\n\n[Rewritten version would appear here in the full version]",
   continue: "Based on your writing style, here's how I would continue this text:\n\n[Continuation would appear here in the full version]",
 };
@@ -42,49 +43,113 @@ const sampleDocument: DocumentOutput = {
 const getDemoResponse = (input: string): string => {
   const lowercaseInput = input.toLowerCase();
   
-  if (lowercaseInput.includes('hello') || lowercaseInput.includes('hi')) {
-    return demoResponses.greeting;
-  } else if (lowercaseInput.includes('help')) {
+  // Special case for "help" to avoid matching it in other contexts
+  if (lowercaseInput === 'help' || lowercaseInput === 'can you help' || lowercaseInput === 'help me') {
     return demoResponses.help;
-  } else if (lowercaseInput.includes('demo') || lowercaseInput.includes('what can you do')) {
+  }
+  
+  // Check for greetings first
+  if (
+    lowercaseInput.match(/^(hi|hello|hey|greetings|howdy)(\s|$)/i) ||
+    lowercaseInput.includes('nice to meet')
+  ) {
+    return demoResponses.greeting;
+  }
+  
+  // Check for questions about demo/capabilities
+  if (
+    lowercaseInput.includes('demo') ||
+    lowercaseInput.includes('what can you do') ||
+    lowercaseInput.includes('how do you work') ||
+    lowercaseInput.includes('what are you') ||
+    lowercaseInput.includes('tell me about you') ||
+    lowercaseInput.includes('what is this')
+  ) {
     return demoResponses.demo;
-  } else if (lowercaseInput.includes('rewrite') || lowercaseInput.includes('revise')) {
+  }
+  
+  // Check for rewrite requests
+  if (
+    lowercaseInput.includes('rewrite') ||
+    lowercaseInput.includes('revise') ||
+    lowercaseInput.includes('improve') ||
+    lowercaseInput.includes('edit') ||
+    lowercaseInput.includes('fix this')
+  ) {
     return demoResponses.rewrite;
-  } else if (lowercaseInput.includes('continue') || lowercaseInput.includes('go on')) {
+  }
+  
+  // Check for continue requests
+  if (
+    lowercaseInput.includes('continue') ||
+    lowercaseInput.includes('go on') ||
+    lowercaseInput.includes('keep going') ||
+    lowercaseInput.includes('write more') ||
+    lowercaseInput.includes('expand on')
+  ) {
     return demoResponses.continue;
   }
   
+  // If no specific pattern matches, provide a more creative response
+  if (lowercaseInput.includes('email') || lowercaseInput.includes('write an email')) {
+    return "I can help draft an email for you. In the full version with your writing samples, I'd match your tone and style perfectly. Here's a professional-sounding template you can customize:\n\nDear [Name],\n\nI hope this email finds you well. I wanted to reach out regarding [topic].\n\n[Your main points here]\n\nPlease let me know if you have any questions.\n\nBest regards,\n[Your name]";
+  }
+  
+  if (lowercaseInput.includes('blog') || lowercaseInput.includes('article')) {
+    return "I'd be happy to help with your blog post or article. In the full version with your writing samples loaded, I would create content that matches your unique style. For now, let me know your topic and key points you want to cover, and I can get you started!";
+  }
+  
+  // Default response for any other input
   return demoResponses.default;
 };
 
 export default function ChatInterface() {
   const { conversation, conversations, isLoading, sendMessage, isSidebarOpen, toggleSidebar, newConversation, setConversations } = useChat();
   const { colors } = useTheme();
+  const { isCorpusReady, isFirstTimeUser } = useCorpus();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isHoveringSidebar, setIsHoveringSidebar] = useState(false);
   const [isHoveringContent, setIsHoveringContent] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [sidebarLockOpen, setSidebarLockOpen] = useState(false);
   const { isDemo } = useAuth();
   const router = useRouter();
   
+  // Add state for sidebar lock
+  const [isSidebarLocked, setIsSidebarLocked] = useState(false);
+  
+  // Add state for using personal style
+  const [usePersonalStyle, setUsePersonalStyle] = useState(true);
+  
   // State for chat messages - sync with conversation from context
-  const [messages, setMessages] = useState<Message[]>(conversation?.messages || [{
+  const [messages, setMessages] = useState<Message[]>(conversation?.messages && conversation.messages.length > 0 ? conversation.messages : [{
     id: '1',
     role: 'assistant',
-    content: "Hello! I'm your AI writing assistant. How can I help you today?",
+    content: "Hi there! I'm Kaku, your friendly AI writing assistant. I can help you create content that sounds just like you wrote it! To get started, upload some of your writing samples using the sidebar menu, then tell me what you'd like to write today. I'm excited to help you craft amazing content in your unique voice!",
     timestamp: new Date().toISOString(),
   }]);
 
-  // Keep messages in sync with conversation
+  // State for documents - sync with conversation documents
+  const [documents, setDocuments] = useState<DocumentOutput[]>(conversation?.documents || []);
+
+  // Sync documents with conversation
   useEffect(() => {
-    if (conversation?.messages) {
+    if (conversation?.documents) {
+      setDocuments(conversation.documents);
+    } else {
+      setDocuments([]);
+    }
+  }, [conversation]);
+
+  // Keep messages in sync with conversation and ensure there's always a welcome message
+  useEffect(() => {
+    if (conversation?.messages && conversation.messages.length > 0) {
       setMessages(conversation.messages);
     } else {
+      // Ensure there's always at least a welcome message
       setMessages([{
         id: '1',
         role: 'assistant',
-        content: "Hello! I'm your AI writing assistant. How can I help you today?",
+        content: "Hi there! I'm Kaku, your friendly AI writing assistant. I can help you create content that sounds just like you wrote it! To get started, upload some of your writing samples using the sidebar menu, then tell me what you'd like to write today. I'm excited to help you craft amazing content in your unique voice!",
         timestamp: new Date().toISOString(),
       }]);
     }
@@ -97,9 +162,6 @@ export default function ChatInterface() {
   const [isTyping, setIsTyping] = useState(false);
   
   // State for documents
-  const [documents, setDocuments] = useState<DocumentOutput[]>([]);
-  
-  // State to control document panel visibility
   const [showDocumentPanel, setShowDocumentPanel] = useState(false);
   
   // State for starred chats
@@ -112,13 +174,22 @@ export default function ChatInterface() {
   const [showPurposeSelector, setShowPurposeSelector] = useState(false);
   
   // State for first-time user
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(true);
-  
-  // State for corpus readiness
-  const [isCorpusReady, setIsCorpusReady] = useState(false);
+  const [isFirstTimeUserSeen, setIsFirstTimeUserSeen] = useState(true);
   
   // State for selected document ID
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+  
+  // State for writing suggestions
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  // State for draft document
+  const [draftDocument, setDraftDocument] = useState<{title: string, content: string} | null>(null);
+  
+  // Calculate remaining free messages for the upload notification
+  const userMessageCount = messages.filter(msg => msg.role === 'user').length;
+  const remainingMessages = Math.max(0, 3 - userMessageCount);
+  const showUploadReminder = isFirstTimeUser && !isCorpusReady && remainingMessages >= 0;
   
   // Handle closing the document panel
   const handleCloseDocumentPanel = () => {
@@ -160,8 +231,6 @@ export default function ChatInterface() {
   const handleMouseLeaveSidebar = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event bubbling
     
-    if (sidebarLockOpen) return;
-    
     hoverTimeoutRef.current = setTimeout(() => {
       if (!isHoveringContent) {
         setIsHoveringSidebar(false);
@@ -178,7 +247,7 @@ export default function ChatInterface() {
     e.stopPropagation(); // Prevent event bubbling
     setIsHoveringContent(false);
     
-    if (!isHoveringSidebar && !sidebarLockOpen) {
+    if (!isHoveringSidebar) {
       setIsHoveringSidebar(false);
     }
   };
@@ -197,11 +266,16 @@ export default function ChatInterface() {
     };
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, content?: string) => {
     e.preventDefault();
     
-    const currentInput = input.trim();
+    const currentInput = content?.trim() || input.trim();
     if (!currentInput) return;
+    
+    // Clear input if we're using the state version
+    if (!content) {
+      setInput('');
+    }
     
     // Add user message
     const userMessage: Message = {
@@ -212,27 +286,47 @@ export default function ChatInterface() {
     };
     
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
     setIsTyping(true);
     
-    // Check for document creation command
-    if (currentInput.toLowerCase().includes('create document')) {
+    // Reset suggestions
+    setSuggestions([]);
+    setShowSuggestions(false);
+    
+    // If in demo mode AND no corpus is ready, use demo responses
+    if (isDemo && !isCorpusReady) {
+      // Check for document creation command
+      if (currentInput.toLowerCase().includes('create document')) {
+        setTimeout(() => {
+          const newDoc = { 
+            ...sampleDocument, 
+            id: Date.now().toString(),
+            title: `Document ${documents.length + 1}`,
+            content: 'This is a new document created from our conversation. You can edit, download, or copy its contents.',
+            createdAt: new Date(),
+          };
+          setDocuments(prev => [...prev, newDoc]);
+          setShowDocumentPanel(true);
+          setSelectedDocId(newDoc.id);
+          
+          const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: "I've created a new document for you. You can view and edit it in the document panel.",
+            timestamp: new Date().toISOString(),
+          };
+          
+          setMessages((prev) => [...prev, assistantMessage]);
+          setIsTyping(false);
+        }, 1500);
+        return;
+      }
+      
+      // Handle other messages in demo mode
       setTimeout(() => {
-        const newDoc = { 
-          ...sampleDocument, 
-          id: Date.now().toString(),
-          title: `Document ${documents.length + 1}`,
-          content: 'This is a new document created from our conversation. You can edit, download, or copy its contents.',
-          createdAt: new Date(),
-        };
-        setDocuments(prev => [...prev, newDoc]);
-        setShowDocumentPanel(true);
-        setSelectedDocId(newDoc.id);
-        
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: "I've created a new document for you. You can view and edit it in the document panel.",
+          content: getDemoResponse(currentInput),
           timestamp: new Date().toISOString(),
         };
         
@@ -242,18 +336,162 @@ export default function ChatInterface() {
       return;
     }
     
-    // Handle other messages
-    setTimeout(() => {
+    // For authenticated users or demo users with corpus, use the RAG API
+    try {
+      // Debug log to see if isCorpusReady is properly set
+      console.log('Sending message to RAG API with corpus info:', {
+        isCorpusReady,
+        style: selectedStyle,
+        purpose: selectedPurpose,
+        currentInput: currentInput.substring(0, 50) + (currentInput.length > 50 ? '...' : '')
+      });
+      
+      const response = await fetch('/api/chat/rag', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage], // Include user message
+          style: selectedStyle,
+          purpose: selectedPurpose,
+          hasCorpus: isCorpusReady && usePersonalStyle // Only use corpus if toggle is on
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Document creation logic based on API response
+      if (data.document) {
+        const newDoc = {
+          id: Date.now().toString(),
+          title: data.document.title || `Document ${documents.length + 1}`,
+          content: data.document.content,
+          createdAt: new Date(),
+        };
+        
+        handleAddDocument(newDoc);
+        setShowDocumentPanel(true);
+        setSelectedDocId(newDoc.id);
+        
+        // Handle suggestions if available
+        if (data.suggestions && data.suggestions.length > 0) {
+          setSuggestions(data.suggestions);
+          setShowSuggestions(true);
+        }
+      }
+      // Handle draftContent with user confirmation
+      else if (data.draftContent && /\b(yes|sure|save|document|create doc|save it)\b/i.test(currentInput)) {
+        // User has confirmed they want to save the document
+        const newDoc = {
+          id: Date.now().toString(),
+          title: data.draftContent.title || `Document ${documents.length + 1}`,
+          content: data.draftContent.content,
+          createdAt: new Date(),
+        };
+        
+        // First update local state
+        setDocuments(prev => [...prev, newDoc]);
+        
+        // Then use the updateDocuments function to ensure it's saved to the conversation
+        handleAddDocument(newDoc);
+        
+        // Show document panel and select the new document
+        setShowDocumentPanel(true);
+        setSelectedDocId(newDoc.id);
+        
+        // Clear draft document from state since it's now saved
+        setDraftDocument(null);
+        
+        // Clear any suggestions since we're past the editing stage
+        setSuggestions([]);
+        setShowSuggestions(false);
+        
+        // Override the API message with confirmation
+        data.message = "I've saved your document to the document panel. You can view, edit, or download it anytime.";
+      }
+      // Use saved draftContent if available (when user previously received a draft but is now responding)
+      else if (draftDocument && /\b(yes|sure|save|document|create doc|save it)\b/i.test(currentInput)) {
+        // User has confirmed they want to save a previously drafted document
+        const newDoc = {
+          id: Date.now().toString(),
+          title: draftDocument.title || `Document ${documents.length + 1}`,
+          content: draftDocument.content,
+          createdAt: new Date(),
+        };
+        
+        // First update local state
+        setDocuments(prev => [...prev, newDoc]);
+        
+        // Then use the updateDocuments function to ensure it's saved to the conversation
+        handleAddDocument(newDoc);
+        
+        // Show document panel and select the new document
+        setShowDocumentPanel(true);
+        setSelectedDocId(newDoc.id);
+        
+        // Clear draft document from state since it's now saved
+        setDraftDocument(null);
+        
+        // Clear any suggestions since we're past the editing stage
+        setSuggestions([]);
+        setShowSuggestions(false);
+        
+        // Override the API message with confirmation
+        data.message = "I've saved your document to the document panel. You can view, edit, or download it anytime.";
+      }
+      // Store draftContent in state for future confirmation
+      else if (data.draftContent) {
+        // Store the draft temporarily in state for later confirmation
+        setDraftDocument(data.draftContent);
+        
+        // Handle suggestions if available
+        if (data.suggestions && data.suggestions.length > 0) {
+          setSuggestions(data.suggestions);
+          setShowSuggestions(true);
+          
+          // Include suggestions directly with the content in the same message
+          const suggestionsText = `\n\n---\n\nSuggestions for improvement:\n${data.suggestions.map((s: string) => `- ${s}`).join('\n')}`;
+          
+          // Modify the response to include the draft content and suggestions
+          data.message = `${data.message}\n\n---\n\n${data.draftContent.content}\n\n${suggestionsText}\n\n---\n\nWould you like me to save this as a document?`;
+        } else {
+          // No suggestions, just show the content
+          data.message = `${data.message}\n\n---\n\n${data.draftContent.content}\n\n---\n\nWould you like me to save this as a document?`;
+        }
+      }
+      
+      // Add assistant message from API response
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: getDemoResponse(currentInput),
+        content: data.message,
         timestamp: new Date().toISOString(),
       };
       
       setMessages((prev) => [...prev, assistantMessage]);
+      
+      // Remove the delay-adding of suggestions - they should already be in the message if needed
+      // Either they're in the draft message, or we don't want to show them after confirmation
+    } catch (error) {
+      console.error('Error calling RAG API:', error);
+      
+      // Fall back to a simple error message
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "I'm sorry, I encountered an error processing your request. Please try again or check your connection.",
+        timestamp: new Date().toISOString(),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   // Get current conversation title
@@ -296,6 +534,7 @@ export default function ChatInterface() {
         messages: [...messages],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        documents: [...documents], // Save documents with conversation
       };
       
       // Update conversations in chat context
@@ -319,26 +558,79 @@ export default function ChatInterface() {
   // Check if current conversation is starred
   const isStarred = conversation?.id && starredChats.includes(conversation.id);
 
-  // Toggle sidebar lock
+  // Handle sidebar lock toggle - only keep this instance
   const handleSidebarLockToggle = (locked: boolean) => {
-    setSidebarLockOpen(locked);
+    setIsSidebarLocked(locked);
+  };
+
+  // Function to add a document to the conversation
+  const handleAddDocument = (document: DocumentOutput) => {
+    const updatedDocuments = [...documents, document];
+    
+    // Set local state
+    setDocuments(updatedDocuments);
+    
+    // Update conversation with new document
+    if (conversation) {
+      const updatedConversation = {
+        ...conversation,
+        documents: updatedDocuments,
+        updatedAt: new Date().toISOString(),
+      };
+      
+      // Update context
+      setConversations(prev => 
+        prev.map(c => c.id === conversation.id ? updatedConversation : c)
+      );
+    }
+  };
+
+  // Sync with the context's style and purpose settings
+  const { selectedStyle: contextStyle, selectedPurpose: contextPurpose, setSelectedStyle: updateContextStyle, setSelectedPurpose: updateContextPurpose } = useChat();
+  
+  useEffect(() => {
+    // Update local state if they differ from context
+    if (contextStyle && contextStyle !== selectedStyle) {
+      setSelectedStyle(contextStyle);
+    }
+    
+    if (contextPurpose && contextPurpose !== selectedPurpose) {
+      setSelectedPurpose(contextPurpose);
+    }
+  }, [contextStyle, contextPurpose, selectedStyle, selectedPurpose]);
+
+  // Function to update styles in both local state and context
+  const handleStyleChange = (newStyle: string) => {
+    setSelectedStyle(newStyle);
+    setShowStyleSelector(false);
+    
+    // Update in context as well
+    if (updateContextStyle) {
+      updateContextStyle(newStyle);
+    }
+  };
+
+  // Function to update purpose in both local state and context
+  const handlePurposeChange = (newPurpose: string) => {
+    setSelectedPurpose(newPurpose);
+    setShowPurposeSelector(false);
+    
+    // Update in context as well
+    if (updateContextPurpose) {
+      updateContextPurpose(newPurpose);
+    }
   };
 
   return (
     <div className="flex h-screen bg-[#212121] text-white overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar Component */}
       <Sidebar 
-        isOpen={isSidebarOpen || isHoveringSidebar || sidebarLockOpen}
-        onClose={() => {
-          if (!sidebarLockOpen) {
-            setIsHoveringSidebar(false);
-          }
-        }}
+        isOpen={isSidebarOpen || isHoveringSidebar || isSidebarLocked}
+        onClose={toggleSidebar}
         onMouseEnter={handleMouseEnterSidebar}
         onMouseLeave={handleMouseLeaveSidebar}
         onLockToggle={handleSidebarLockToggle}
-        isLocked={sidebarLockOpen}
-        onNewChat={handleNewChat}
+        isLocked={isSidebarLocked}
       />
       
       {/* Main Content */}
@@ -401,12 +693,14 @@ export default function ChatInterface() {
         {/* Chat messages area */}
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="max-w-3xl mx-auto">
-            {/* Small notification banner for sample upload - only shown to first-time users */}
-            {isFirstTimeUser && !isCorpusReady && (
+            {/* Notification banner for sample upload - only shown to first-time users with remaining messages */}
+            {showUploadReminder && (
               <div className="bg-[#0077b6]/20 text-white rounded-lg p-3 mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-sm">
-                    Upload writing samples to get responses in your style. You have 3 messages until then.
+                    {remainingMessages > 0
+                      ? `Upload writing samples to get responses in your style. You have ${remainingMessages} message${remainingMessages !== 1 ? 's' : ''} until then.`
+                      : 'Upload writing samples now to get responses tailored to your style.'}
                   </p>
                 </div>
                 <button 
@@ -440,17 +734,45 @@ export default function ChatInterface() {
         <div className="w-full px-4 py-3 bg-[#252525]">
           <ChatInput 
             onSendMessage={async (content) => {
-              setInput(content);
-              await new Promise(resolve => setTimeout(resolve, 0)); // Allow state to update
               handleSubmit({
                 preventDefault: () => {},
-              } as React.FormEvent);
+              } as React.FormEvent, content);
             }} 
             isLoading={isTyping}
           />
           
           {/* Style Controls */}
           <div className="flex mt-2 text-xs text-gray-400 space-x-4 max-w-3xl mx-auto">
+            {/* Status indicator */}
+            <div className="flex items-center text-blue-400 mr-1 fade-in">
+              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+              </svg>
+              <span>Using your writing samples {isCorpusReady ? '✓' : '✗'}</span>
+            </div>
+            
+            {/* Personal Style Toggle */}
+            <div className="flex items-center ml-2">
+              <label htmlFor="style-toggle" className="text-xs text-gray-400 mr-2">
+                Use my style
+              </label>
+              <div className="relative inline-block w-10 mr-2 align-middle select-none">
+                <input
+                  id="style-toggle"
+                  type="checkbox"
+                  checked={usePersonalStyle}
+                  onChange={() => setUsePersonalStyle(!usePersonalStyle)}
+                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                />
+                <label
+                  htmlFor="style-toggle"
+                  className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${
+                    usePersonalStyle ? 'bg-blue-500' : 'bg-gray-600'
+                  }`}
+                ></label>
+              </div>
+            </div>
+            
             {/* Style Selector */}
             <div className="relative">
               <button
@@ -458,7 +780,11 @@ export default function ChatInterface() {
                   setShowStyleSelector(!showStyleSelector);
                   setShowPurposeSelector(false);
                 }}
-                className="flex items-center hover:text-blue-400 py-1"
+                className={`flex items-center py-1 px-2 rounded ${
+                  selectedStyle !== "Original" 
+                    ? "text-blue-400 bg-blue-900/20 border border-blue-800/30" 
+                    : "hover:text-blue-400"
+                }`}
               >
                 <span className="mr-1">Style: {selectedStyle}</span>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -467,14 +793,11 @@ export default function ChatInterface() {
               </button>
               
               {showStyleSelector && (
-                <div className="absolute bottom-full mb-2 left-0 bg-[#2e2e2e] border border-gray-700 rounded-md shadow-lg p-2 w-48">
-                  {["Professional", "Casual", "Academic", "Creative", "Technical", "Persuasive"].map((style) => (
+                <div className="absolute bottom-full mb-2 left-0 bg-[#2e2e2e] border border-gray-700 rounded-md shadow-lg p-2 w-48 z-50">
+                  {["Original", "Professional", "Casual", "Academic", "Creative", "Technical", "Persuasive"].map((style) => (
                     <button
                       key={style}
-                      onClick={() => {
-                        setSelectedStyle(style);
-                        setShowStyleSelector(false);
-                      }}
+                      onClick={() => handleStyleChange(style)}
                       className={`w-full text-left px-3 py-1.5 rounded-md ${
                         selectedStyle === style 
                           ? "bg-blue-900/50 text-white" 
@@ -495,7 +818,11 @@ export default function ChatInterface() {
                   setShowPurposeSelector(!showPurposeSelector);
                   setShowStyleSelector(false);
                 }}
-                className="flex items-center hover:text-blue-400 py-1"
+                className={`flex items-center py-1 px-2 rounded ${
+                  selectedPurpose !== "General" 
+                    ? "text-blue-400 bg-blue-900/20 border border-blue-800/30" 
+                    : "hover:text-blue-400"
+                }`}
               >
                 <span className="mr-1">Purpose: {selectedPurpose}</span>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -504,14 +831,11 @@ export default function ChatInterface() {
               </button>
               
               {showPurposeSelector && (
-                <div className="absolute bottom-full mb-2 left-0 bg-[#2e2e2e] border border-gray-700 rounded-md shadow-lg p-2 w-48">
-                  {["Business", "Academic", "Marketing", "Social Media", "Personal", "Technical"].map((purpose) => (
+                <div className="absolute bottom-full mb-2 left-0 bg-[#2e2e2e] border border-gray-700 rounded-md shadow-lg p-2 w-48 z-50">
+                  {["General", "Business", "Academic", "Marketing", "Social Media", "Personal", "Technical"].map((purpose) => (
                     <button
                       key={purpose}
-                      onClick={() => {
-                        setSelectedPurpose(purpose);
-                        setShowPurposeSelector(false);
-                      }}
+                      onClick={() => handlePurposeChange(purpose)}
                       className={`w-full text-left px-3 py-1.5 rounded-md ${
                         selectedPurpose === purpose 
                           ? "bg-blue-900/50 text-white" 

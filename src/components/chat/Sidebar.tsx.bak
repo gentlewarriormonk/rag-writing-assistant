@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useChat } from '@/contexts/chat-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useAuth } from '@/contexts/supabase-auth-context';
-// import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -13,8 +13,6 @@ interface SidebarProps {
   onClose: () => void;
   onMouseEnter?: (e: React.MouseEvent) => void;
   onMouseLeave?: (e: React.MouseEvent) => void;
-  onLockToggle?: (locked: boolean) => void;
-  isLocked?: boolean;
 }
 
 export default function Sidebar({ 
@@ -22,8 +20,6 @@ export default function Sidebar({
   onClose, 
   onMouseEnter, 
   onMouseLeave,
-  onLockToggle,
-  isLocked = false
 }: SidebarProps) {
   const { conversation, conversations, newConversation, loadConversation, deleteConversation } = useChat();
   const { toggleDarkMode, isDarkMode } = useTheme();
@@ -64,22 +60,16 @@ export default function Sidebar({
     setActiveTab(tab);
   };
 
-  // Handler for locking/unlocking the sidebar
-  const toggleLock = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onLockToggle) {
-      onLockToggle(!isLocked);
-    }
-  };
 
   return (
-    <div
-      className="fixed inset-y-0 left-0 w-64 bg-blue-900/10 backdrop-blur-sm border-r border-gray-800/50 z-10 flex flex-col h-full shadow-xl"
-      style={{
-        transform: isOpen ? 'translateX(0)' : 'translateX(-280px)',
-        opacity: isOpen ? 1 : 0,
-        transition: 'transform 0.2s ease-in-out, opacity 0.2s ease-in-out'
+    <motion.div 
+      initial={{ x: -280, opacity: 0 }}
+      animate={{ 
+        x: isOpen ? 0 : -280,
+        opacity: isOpen ? 1 : 0
       }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="fixed inset-y-0 left-0 w-64 bg-blue-900/10 backdrop-blur-sm border-r border-gray-800/50 z-10 flex flex-col h-full shadow-xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={(e) => {
@@ -87,7 +77,7 @@ export default function Sidebar({
       }}
     >
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top section with Voices link and lock button */}
+        {/* Top section with Voices link */}
         <div className="pt-4 px-3 pb-3 border-b border-gray-800/30 flex justify-between items-center">
           <Link 
             href="/voices"
@@ -99,18 +89,10 @@ export default function Sidebar({
             Voices
           </Link>
           
-          {/* Lock/Unlock button */}
+          {/* Voices link */}
           <button
-            onClick={toggleLock}
-            className={`p-1.5 rounded-full ${
-              isLocked 
-                ? 'text-blue-400 bg-blue-400/10' 
-                : 'text-gray-400 hover:text-blue-400 hover:bg-gray-800/40'
-            }`}
-            aria-label={isLocked ? "Unlock sidebar" : "Lock sidebar open"}
           >
             <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              {isLocked ? (
                 <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0010 5.5V9H3a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2h-1.5V5.5a3 3 0 116 0v2.75a.75.75 0 001.5 0V5.5A4.5 4.5 0 0014.5 1z" clipRule="evenodd" />
               ) : (
                 <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
@@ -321,6 +303,6 @@ export default function Sidebar({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 } 

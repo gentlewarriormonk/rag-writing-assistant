@@ -26,11 +26,12 @@ export default function HomePage() {
       {/* Navigation */}
       <nav className="bg-[#1a1a1a]/90 backdrop-blur-sm border-b border-gray-800 fixed w-full z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-gradient-to-br from-[#0077b6] to-[#00a8e8] rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg font-bold">書</span>
-            </div>
-            <span className="font-bold text-xl">Kaku</span>
+          <div className="flex items-center space-x-2">
+            <img 
+              src="/kaku/kaku-logo.png" 
+              alt="Kaku" 
+              className="h-8"
+            />
           </div>
           
           <div className="flex items-center space-x-6">
@@ -56,8 +57,15 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-24">
         <div className="container mx-auto px-4 flex flex-col items-center text-center">
+          <div className="mb-8 relative">
+            <img 
+              src="/kaku/kaku-avatar.png" 
+              alt="Kaku Character" 
+              className="w-36 h-36 mb-4"
+            />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold max-w-4xl mb-6">
-            Write in <span className="bg-gradient-to-r from-[#0077b6] to-[#00a8e8] text-transparent bg-clip-text">your voice</span>, powered by AI
+            Meet <span className="bg-gradient-to-r from-[#0077b6] to-[#00a8e8] text-transparent bg-clip-text">Kaku</span>, your AI writing assistant
           </h1>
           <p className="text-gray-400 max-w-2xl text-lg mb-8">
             Kaku helps you generate authentic content that matches your writing style by learning from your reference materials.

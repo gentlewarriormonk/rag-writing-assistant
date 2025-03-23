@@ -29,6 +29,8 @@ export default function SampleManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -70,6 +72,7 @@ export default function SampleManager() {
   const handleUpload = async (files: File[]) => {
     setIsUploading(true);
     setUploadError(null);
+    setUploadSuccess(false);
     
     try {
       // Filter for text and document files
@@ -90,7 +93,8 @@ export default function SampleManager() {
       
       const result = await uploadDocuments(validFiles);
       if (result) {
-        router.push('/dashboard');
+        setUploadSuccess(true);
+        setSuccessMessage(`Successfully uploaded ${validFiles.length} ${validFiles.length === 1 ? 'sample' : 'samples'}! Kaku can now write in your style.`);
       } else {
         setUploadError('Upload failed. Please try again.');
       }
@@ -123,8 +127,51 @@ export default function SampleManager() {
     }
   };
 
+  // Handler for going to chat
+  const handleTalkToKaku = () => {
+    router.push('/dashboard');
+  };
+
   return (
     <div className="bg-[#252525] rounded-lg border border-gray-800 p-6">
+      <div className="flex items-start mb-8">
+        <div className="flex-shrink-0 mr-4">
+          <img 
+            src="/kaku/kaku-avatar.png" 
+            alt="Kaku" 
+            className="w-20 h-20"
+          />
+        </div>
+        <div className="bg-[#2e2e2e] rounded-lg p-4 border border-gray-700 relative">
+          <div className="absolute left-[-12px] top-6 w-0 h-0 border-t-[12px] border-t-transparent border-r-[12px] border-r-[#2e2e2e] border-b-[12px] border-b-transparent"></div>
+          <h2 className="text-xl font-medium text-white mb-2">Upload Your Writing Samples</h2>
+          <p className="text-gray-300 mb-2">
+            The more samples you provide, the better I can match your unique writing style. I'll analyze your vocabulary, sentence structure, and tone to create content that sounds authentically like you wrote it!
+          </p>
+          <p className="text-sm text-gray-400">
+            Your samples are stored securely and used only to improve your writing experience.
+          </p>
+        </div>
+      </div>
+      
+      {/* Success message */}
+      {uploadSuccess && (
+        <div className="bg-green-900/20 border border-green-600 rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-center justify-between">
+          <div className="flex items-center mb-3 sm:mb-0">
+            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="text-gray-200">{successMessage}</p>
+          </div>
+          <Button 
+            onClick={handleTalkToKaku}
+            className="bg-blue-600 hover:bg-blue-500"
+          >
+            Talk to Kaku
+          </Button>
+        </div>
+      )}
+      
       <h2 className="text-xl font-medium text-white mb-6">Your Writing Samples</h2>
       
       {/* Corpus Stats */}

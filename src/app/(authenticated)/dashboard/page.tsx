@@ -24,7 +24,7 @@ export default function DashboardPage() {
   };
 
   const handleContinueWithoutSamples = () => {
-    // Just hide the welcome card and let user proceed with the chat interface
+    // Hide the welcome card and let user proceed with the chat interface
     setShowWelcome(false);
   };
 
@@ -36,16 +36,21 @@ export default function DashboardPage() {
     );
   }
 
+  // Show onboarding welcome card or chat interface
+  if (isFirstTimeUser && showWelcome && !isDemo) {
+    return (
+      <div className="flex flex-col h-screen bg-[#212121] items-center justify-center p-4">
+        <WelcomeCard 
+          onUploadClick={handleUploadClick}
+          onContinueClick={handleContinueWithoutSamples} 
+        />
+      </div>
+    );
+  }
+
+  // Show chat interface when not showing welcome card or for demo users
   return (
     <div className="flex flex-col h-screen bg-[#212121]">
-      {isFirstTimeUser && showWelcome && (
-        <div className="pt-6 px-4">
-          <WelcomeCard 
-            onUploadClick={handleUploadClick}
-            onContinueClick={handleContinueWithoutSamples} 
-          />
-        </div>
-      )}
       <ChatInterface />
     </div>
   );

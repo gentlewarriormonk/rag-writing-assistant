@@ -61,6 +61,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         setIsLoading(true);
         
+        // Check if in demo mode from localStorage
+        const isDemoMode = localStorage.getItem('kaku_demo_mode') === 'true';
+        if (isDemoMode) {
+          // Restore demo user
+          const demoUser: EnhancedUser = {
+            id: 'demo-user-id',
+            email: 'demo@example.com',
+            role: 'free',
+            uploadsRemaining: 3,
+            maxUploads: 3
+          };
+          setUser(demoUser);
+          setIsDemo(true);
+          setIsLoading(false);
+          return;
+        }
+        
         // Get current session
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -265,30 +282,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Enter demo mode
   const enterDemoMode = async (): Promise<void> => {
     setIsLoading(true);
-    try {
-      // Create a demo user (server-side function would be better)
-      // For now, using a local approach
-      const demoUser: EnhancedUser = {
-        id: 'demo-user-id',
-        email: 'demo@example.com',
-        role: 'free',
-        uploadsRemaining: 3,
-        maxUploads: 3
-      };
-      
-      setUser(demoUser);
-      setIsDemo(true);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error entering demo mode:', error);
-      setIsLoading(false);
-    }
+    
+    // Create a demo user with necessary properties
+    const demoUser: EnhancedUser = {
+      id: 'demo-user-id',
+      email: 'demo@example.com',
+      role: 'free',
+      uploadsRemaining: 3,
+      maxUploads: 3
+    };
+    
+    // Set demo mode state
+    setUser(demoUser);
+    setIsDemo(true);
+    
+    // Store demo mode in localStorage for persistence
+    localStorage.setItem('kaku_demo_mode', 'true');
+    
+    // Complete loading
+    setIsLoading(false);
   };
 
   // Exit demo mode
   const exitDemoMode = async (): Promise<void> => {
+    // Clear demo mode state
     setUser(null);
     setIsDemo(false);
+    
+    // Remove demo mode from localStorage
+    localStorage.removeItem('kaku_demo_mode');
   };
 
   const contextValue: AuthContextType = {

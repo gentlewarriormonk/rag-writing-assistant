@@ -23,20 +23,22 @@ const DemoModeButton = () => {
       if (isDemo) {
         await exitDemoMode();
         setFeedbackMessage('Exited demo mode');
-        // After a brief delay to show the message, redirect
-        setTimeout(() => router.push('/'), 1000);
+        // After a brief delay to show the message, use direct navigation
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
       } else {
         await enterDemoMode();
         setFeedbackMessage('Entered demo mode');
-        // After a brief delay to show the message, redirect
-        setTimeout(() => router.push('/dashboard'), 1000);
+        // After a brief delay to show the message, use direct navigation
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
       }
     } catch (error) {
       console.error(`Failed to ${isDemo ? 'exit' : 'enter'} demo mode:`, error);
       setFeedbackMessage(`Error: Could not ${isDemo ? 'exit' : 'enter'} demo mode`);
-    } finally {
-      // Keep loading state active for a moment to show the feedback message
-      setTimeout(() => setIsLoading(false), 1500);
+      setIsLoading(false);
     }
   };
 

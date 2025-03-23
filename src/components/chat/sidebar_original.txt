@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useChat } from '@/contexts/chat-context';
 import { useTheme } from '@/contexts/theme-context';
 import { useAuth } from '@/contexts/supabase-auth-context';
-// import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -73,13 +73,14 @@ export default function Sidebar({
   };
 
   return (
-    <div
-      className="fixed inset-y-0 left-0 w-64 bg-blue-900/10 backdrop-blur-sm border-r border-gray-800/50 z-10 flex flex-col h-full shadow-xl"
-      style={{
-        transform: isOpen ? 'translateX(0)' : 'translateX(-280px)',
-        opacity: isOpen ? 1 : 0,
-        transition: 'transform 0.2s ease-in-out, opacity 0.2s ease-in-out'
+    <motion.div 
+      initial={{ x: -280, opacity: 0 }}
+      animate={{ 
+        x: isOpen ? 0 : -280,
+        opacity: isOpen ? 1 : 0
       }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="fixed inset-y-0 left-0 w-64 bg-blue-900/10 backdrop-blur-sm border-r border-gray-800/50 z-10 flex flex-col h-full shadow-xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={(e) => {
@@ -321,6 +322,6 @@ export default function Sidebar({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 } 

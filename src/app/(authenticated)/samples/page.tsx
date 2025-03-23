@@ -15,6 +15,10 @@ export default function SamplesPage() {
     }
   }, [user, isLoading, isDemo, router]);
 
+  const handleBackToDashboard = () => {
+    router.push('/dashboard');
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#212121] text-white">
@@ -28,7 +32,7 @@ export default function SamplesPage() {
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center mb-6">
           <button 
-            onClick={() => router.push('/dashboard')}
+            onClick={handleBackToDashboard}
             className="text-gray-400 hover:text-white mr-4"
             aria-label="Back to dashboard"
           >

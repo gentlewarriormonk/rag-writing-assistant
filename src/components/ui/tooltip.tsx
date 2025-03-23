@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -33,27 +32,21 @@ export function Tooltip({
     >
       {children}
       
-      <AnimatePresence>
-        {isVisible && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
-            className={`absolute z-50 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded shadow-lg whitespace-nowrap ${positionClasses[position]}`}
-          >
-            {content}
-            <div 
-              className={`absolute w-2 h-2 bg-gray-900 transform rotate-45 ${
-                position === 'top' ? 'top-full -translate-y-1/2 left-1/2 -translate-x-1/2' :
-                position === 'bottom' ? 'bottom-full translate-y-1/2 left-1/2 -translate-x-1/2' :
-                position === 'left' ? 'left-full -translate-x-1/2 top-1/2 -translate-y-1/2' :
-                'right-full translate-x-1/2 top-1/2 -translate-y-1/2'
-              }`}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isVisible && (
+        <div
+          className={`absolute z-50 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded shadow-lg whitespace-nowrap transition-all duration-150 transform ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'} ${positionClasses[position]}`}
+        >
+          {content}
+          <div 
+            className={`absolute w-2 h-2 bg-gray-900 transform rotate-45 ${
+              position === 'top' ? 'top-full -translate-y-1/2 left-1/2 -translate-x-1/2' :
+              position === 'bottom' ? 'bottom-full translate-y-1/2 left-1/2 -translate-x-1/2' :
+              position === 'left' ? 'left-full -translate-x-1/2 top-1/2 -translate-y-1/2' :
+              'right-full translate-x-1/2 top-1/2 -translate-y-1/2'
+            }`}
+          />
+        </div>
+      )}
     </div>
   );
 } 

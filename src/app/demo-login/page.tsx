@@ -16,7 +16,8 @@ export default function DemoLoginPage() {
     setIsLoading(true);
     try {
       await enterDemoMode();
-      router.push('/dashboard');
+      // Use window.location.href for a full page refresh to ensure state is properly updated
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Failed to enter demo mode:', error);
       setIsLoading(false);
@@ -29,7 +30,7 @@ export default function DemoLoginPage() {
         return {
           title: "Experience Without Commitment",
           description: "Try Kaku's core features without creating an account or providing any credentials.",
-          icon: "🚀"
+          icon: <img src="/kaku/kaku-avatar.png" alt="Kaku" className="w-12 h-12" />
         };
       case 2:
         return {
@@ -47,7 +48,7 @@ export default function DemoLoginPage() {
         return {
           title: "Experience Without Commitment",
           description: "Try Kaku's core features without creating an account or providing any credentials.",
-          icon: "🚀"
+          icon: <img src="/kaku/kaku-avatar.png" alt="Kaku" className="w-12 h-12" />
         };
     }
   };
@@ -64,14 +65,18 @@ export default function DemoLoginPage() {
       </Link>
       
       <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8">
-        <div className="flex items-center justify-center mb-6">
-          <div className="h-12 w-12 bg-gradient-to-br from-[#0077b6] to-[#00a8e8] rounded-lg flex items-center justify-center">
-            <span className="text-white text-2xl font-bold">書</span>
+        <div className="flex items-center justify-center mb-6 relative">
+          <div className="relative">
+            <img 
+              src="/kaku/kaku-avatar.png" 
+              alt="Kaku" 
+              className="h-28"
+            />
           </div>
         </div>
         <h1 className="text-center text-3xl font-bold">
           <span className="bg-gradient-to-r from-[#0077b6] to-[#00a8e8] text-transparent bg-clip-text">
-            Kaku Demo Mode
+            Demo Mode
           </span>
         </h1>
         <h2 className="mt-2 text-center text-sm font-medium text-gray-400">

@@ -1,24 +1,12 @@
 import './globals.css';
 import { Metadata } from 'next';
-import { Inter, Montserrat, JetBrains_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { Providers } from './providers';
 
-// Load fonts
+// Load Inter font
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
-});
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-  display: 'swap',
-});
-
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
   display: 'swap',
 });
 
@@ -36,7 +24,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${montserrat.variable} ${jetBrainsMono.variable} font-sans bg-[#121212] text-white`}
+        className={`${inter.variable} font-sans bg-[#121212] text-white`}
       >
         <Providers>
           {children}

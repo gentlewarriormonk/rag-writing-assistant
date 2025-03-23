@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isRequestForContentCreation, extractDocumentTitle } from '@/lib/contentHelpers';
 
 export async function POST(request: Request) {
   try {
@@ -19,6 +20,9 @@ export async function POST(request: Request) {
     if (messages.length <= 2) {
       title = generateTitle(lastUserMessage.content);
     }
+    
+    // Check if this is a content creation request
+    const isContentCreation = isRequestForContentCreation(lastUserMessage.content);
     
     // Check if ANTHROPIC_API_KEY is set
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -48,15 +52,45 @@ export async function POST(request: Request) {
         }
         
         const data = await response.json();
+        const generatedContent = data.content[0].text;
+        
+        // If this is a content creation request, also return as a document
+        if (isContentCreation) {
+          const docTitle = extractDocumentTitle(lastUserMessage.content);
+          
+          return NextResponse.json({
+            message: "I've created the content you requested. You can view it in the document panel or continue our conversation to make revisions.",
+            title: title,
+            document: {
+              title: docTitle,
+              content: generatedContent
+            }
+          });
+        }
         
         return NextResponse.json({
-          message: data.content[0].text,
+          message: generatedContent,
           title: title,
         });
       } catch (error) {
         console.error('Anthropic API error:', error);
         // Fall back to mock response if API call fails
         const mockResponse = generateResponse(lastUserMessage.content);
+        
+        // If this is a content creation request, also return as a document
+        if (isContentCreation) {
+          const docTitle = extractDocumentTitle(lastUserMessage.content);
+          
+          return NextResponse.json({
+            message: "I've created the content you requested. You can view it in the document panel or continue our conversation to make revisions.",
+            title: title,
+            document: {
+              title: docTitle,
+              content: mockResponse
+            }
+          });
+        }
+        
         return NextResponse.json({
           message: mockResponse,
           title: title,
@@ -66,6 +100,20 @@ export async function POST(request: Request) {
       // Use mock response if API key is not set
       console.log('Using mock response as ANTHROPIC_API_KEY is not set');
       const response = generateResponse(lastUserMessage.content);
+      
+      // If this is a content creation request, also return as a document
+      if (isContentCreation) {
+        const docTitle = extractDocumentTitle(lastUserMessage.content);
+        
+        return NextResponse.json({
+          message: "I've created the content you requested. You can view it in the document panel or continue our conversation to make revisions.",
+          title: title,
+          document: {
+            title: docTitle,
+            content: response
+          }
+        });
+      }
       
       return NextResponse.json({
         message: response,
@@ -85,7 +133,7 @@ export async function POST(request: Request) {
 function generateResponse(message: string): string {
   // If the message is a greeting or introduction
   if (/hello|hi|hey|greetings/i.test(message)) {
-    return "Hello! I'm your writing assistant powered by RAG technology. I can help you generate content that matches your writing style. What would you like to write today?";
+    return "Hi, I'm Kaku. How can I help you today?";
   }
   
   // If the message asks about RAG
@@ -103,16 +151,61 @@ function generateResponse(message: string): string {
     return "To get the most out of me:\n\n1. Upload diverse writing samples (more is better)\n2. Be specific about what you'd like me to write\n3. Provide context about the audience and purpose\n4. Let me know if you want a specific tone or formality level\n\nWould you like to upload some writing samples now?";
   }
   
+  // If content creation is requested
+  if (isRequestForContentCreation(message)) {
+    return generateBasicContent(message);
+  }
+  
   // Default response for other queries
   return "I understand you're asking about \"" + message.substring(0, 30) + (message.length > 30 ? "..." : "") + "\". To give you the most helpful response, I'd need to analyze your writing style first. The more writing samples you upload, the better I can match your unique voice. Would you like to upload some writing samples?";
 }
 
+/**
+ * Generate basic content for document creation requests
+ */
+function generateBasicContent(message: string): string {
+  // Extract what type of content is being requested
+  let contentType = "document";
+  const contentTypeMatches = message.match(/(email|letter|essay|article|blog post|report|story|paragraph|document|content|text|message|post)/i);
+  if (contentTypeMatches && contentTypeMatches[0]) {
+    contentType = contentTypeMatches[0].toLowerCase();
+  }
+  
+  // Try to extract a topic
+  let topic = "";
+  const aboutMatches = message.match(/about (.*?)($|\.|,|\?)/i);
+  const onMatches = message.match(/on (.*?)($|\.|,|\?)/i);
+  if (aboutMatches && aboutMatches[1]) {
+    topic = aboutMatches[1];
+  } else if (onMatches && onMatches[1]) {
+    topic = onMatches[1];
+  } else {
+    topic = "the requested subject";
+  }
+  
+  return `# Sample ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} about ${topic.charAt(0).toUpperCase() + topic.slice(1)}
+
+This is a demonstration of the type of content I can create. In the full version with your writing samples uploaded, I would generate content that matches your personal writing style.
+
+## Introduction
+This introduction would set the context for this ${contentType} about ${topic}. It would be written in a style that matches your typical approach to introducing topics.
+
+## Main Content
+The body of this ${contentType} would develop key points about ${topic} in a logical structure. The content would be organized according to best practices for this type of writing while maintaining your personal voice.
+
+## Conclusion
+This conclusion would summarize the main points and provide closure in a way that's consistent with your writing style.
+
+---
+To get content that truly matches your voice, please upload writing samples using the sidebar menu.`;
+}
+
 // Helper function to generate a title
-function generateTitle(message: string): string {
-  const words = message.split(' ');
+function generateTitle(content: string): string {
+  const words = content.split(' ');
   
   if (words.length <= 3) {
-    return message;
+    return content;
   }
   
   const shortTitle = words.slice(0, 4).join(' ');
