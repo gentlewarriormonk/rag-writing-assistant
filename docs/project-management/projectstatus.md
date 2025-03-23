@@ -1,115 +1,157 @@
-# Project Status & Todo Document
+# Kaku - AI Writing Assistant Project Status
 
-*Last Updated: March 20, 2025*
+## Latest Updates (March 25, 2025)
+We've implemented several key improvements and established the path forward:
 
-## Project Overview
-- **Project Name:** [App Name]
-- **Current Phase:** Foundation & Authentication Setup
-- **Color Scheme:** White (#ffffff), Dark Blue (#0f172a), Blue (#0EA5E9), Teal (#06B6D4), Gray (#64748B)
-- **Font:** Inter
+1. ✅ **Brand Identity Development**
+   - Created Kaku mascot character for assistant identity
+   - Selected Nunito font for logo typography
+   - Selected Inter font for application interface
+   - Added brand assets to public directory
 
-## Current Progress
+2. ✅ **Revised "Voices" Feature Implementation**
+   - Completed voices management page with premium upsell
+   - Updated model to allow any voice type creation (limited by count)
+   - Free tier: 1 voice profile, Premium tier: Multiple voice profiles
+   - Added sample count indicators and last used information
 
-### ✅ Completed
-- Initial color scheme selection
-- Basic architectural planning
-- Documentation framework
-- Security requirements analysis
+3. ✅ **Style Selection Refinements**
+   - Retained current style dropdown system (Professional, Casual, etc.)
+   - Maintained purpose selection dropdown (Business, Academic, etc.)
+   - Added visual prominence to active selections
 
-### 🔄 In Progress
-- Technical Architecture document
-- PRD revision
-- Implementation plan
-- Authentication design
+4. ✅ **Feature Roadmap Finalization**
+   - Established Phase 1 (Web MVP) scope and priorities
+   - Defined Phase 2 (Voice & Mobile) features and timeline
+   - Created specific implementation plan for each component
 
-### ⏱️ Not Started
-- Project initialization
-- Authentication implementation
-- Feature development
-- Security testing
+5. ✅ **RAG Style Analysis Specification**
+   - Defined specific metrics for style analysis:
+     - Sentence length distribution
+     - Vocabulary distinctiveness 
+     - Transition patterns
+     - Formality level indicators
+     - Voice & tone patterns
+   - Designed simplified style report concept
 
-## Critical Path Items
+## Previous Updates (March 24, 2025)
+We've implemented several key UI improvements and feature additions:
 
-### 🚨 Immediate Priorities (Next 48 Hours)
-1. Finalize Technical Architecture document
-2. Initialize project with security configurations
-3. Implement basic authentication structure
-4. Set up security headers and HTTPS
+1. ✅ Added pricing page with tiered options
+   - Created pricing tiers (Free, Premium, Enterprise)
+   - Added detailed feature comparison table
+   - Implemented monthly/yearly toggle with discount
+   - Added FAQ section for common questions
 
-### 🔶 Short-Term Priorities (Next Week)
-1. Complete authentication implementation
-2. Conduct initial security testing
-3. Begin core feature development
-4. Set up automated security scanning
+2. ✅ Renamed "Projects" to "Voices" throughout the app
+   - Updated sidebar navigation
+   - Created voice management page with premium upsell
+   - Added premium feature modal for multiple voices
 
-### 🔷 Medium-Term Priorities (Next 2-4 Weeks)
-1. Complete core features
-2. Conduct comprehensive security audit
-3. Optimize performance
-4. Prepare for launch
+3. ✅ Added "Upgrade to Pro" button in sidebar
+   - Button links to pricing page
+   - Positioned near the bottom of the sidebar for visibility
 
-## Security Status
+4. ✅ Improved input area styling
+   - Added blue outline effect on hover/focus
+   - Matches the drag-and-drop area in the samples page
+   - Provides consistent visual feedback for interactive elements
 
-### 🔒 Core Security Measures (UX-Friendly)
-- None yet - in planning phase
+5. ✅ Fixed chat interface layout
+   - Reduced width to ~800px for better readability
+   - Centered content similar to Claude interface
+   - Reduced maximum input height from 10 lines to 8 lines
+   - Added sample upload reminder banner for new users
 
-### 🚨 Security Vulnerabilities
-- None identified yet - pending security testing
+6. ✅ Created Settings page
+   - Added account information section
+   - Included privacy & data management options
+   - Added notification preferences
+   - Included theme toggle and app information
 
-### 🔄 Security Tasks In Progress
-- Simple, user-friendly authentication flow
-- Basic security headers configuration
-- HTTPS setup planning
-- Lightweight bot protection strategy
+## Previous Updates (March 23, 2024)
+(Previous update details remain unchanged)
 
-## Dependencies & Blockers
+## Current Status (as of March 25, 2025)
+- **App Identity**: 
+  - Named "Kaku" (書く) - Japanese for "writing"
+  - Brand assets created (mascot character, logo typography)
+  - Future domain: kakuapp.ai (pending)
 
-### External Dependencies
-- Authentication provider selection
-- API endpoints availability
-- Third-party security services
+- **Authentication System**: 
+  - ✅ Supabase integration complete
+  - ✅ Google OAuth implemented
+  - ✅ Role-based access control (free/paid/enterprise/admin)
+  - ✅ Demo mode functionality
+  - ✅ Session management with secure cookie storage
 
-### Current Blockers
-- None at this time
+- **UI Implementation**:
+  - ✅ Dark mode by default with dark gray color scheme
+  - ✅ Minimalist chat-focused design
+  - ✅ Login/Register forms
+  - ✅ Error components added (error, not-found, loading, global-error)
+  - ✅ Collapsible sidebar with hover functionality and lock option
+  - ✅ Title header with chat controls
+  - ✅ Right-side output panel with document cards and viewer
+  - ✅ Voice management UI
+  - ✅ Expandable input area with auto-resize
+  - ✅ Writing style controls
+  - ✅ Settings page with account and privacy controls
+  - ✅ Pricing page with tiered options
+  - ⏳ Inter font implementation
+  - ⏳ Kaku character integration in messages
+  - ⏳ Visual distinction for assistant message areas
 
-## Next Implementation Steps (For Cursor)
+- **API Integration**:
+  - ✅ Anthropic Claude API integration foundation
+  - ✅ Environment variables configuration
+  - ✅ Error handling and fallbacks
+  - ⏳ RAG implementation
+  - ⏳ Style analysis integration
+  - ⏳ Document version control
 
-### Immediate Actions
-1. Initialize React project with TypeScript and security configurations
-   ```bash
-   npx create-react-app app-name --template typescript
-   cd app-name
-   npm install @types/node @types/react @types/react-dom @types/jest
-   ```
+## Next Implementation Steps
 
-2. Set up security-focused ESLint configuration
-   ```bash
-   npm install eslint-plugin-security
-   ```
+### 1. User Interface Enhancements
+- Switch interface font to Inter
+- Integrate Kaku character into assistant messages
+- Add visual distinction to assistant message areas
+- Improve active state for style/purpose selectors
 
-3. Create authentication context scaffold
-   ```typescript
-   // src/contexts/AuthContext.tsx
-   // Implementation details will be provided
-   ```
+### 2. RAG Implementation
+- Set up document processing pipeline
+- Implement style analysis metrics
+- Create prompt engineering for style matching
+- Build style report UI
 
-4. Implement token management utilities
-   ```typescript
-   // src/utils/auth.ts
-   // Implementation details will be provided
-   ```
+### 3. Document Management
+- Implement version history functionality
+- Create version comparison interface
+- Add export options with proper formatting
 
-## Future Updates Tracking
+### 4. Testing & Optimization
+- Test RAG style matching accuracy
+- Optimize chat interface performance
+- Ensure mobile responsiveness
+- Conduct security review
 
-This document will be continuously updated throughout the project lifecycle to maintain a clear overview of:
-- Implementation progress
-- Security status
-- Outstanding tasks
-- Identified vulnerabilities and mitigations
+### 5. Phase 2 Preparation
+- Research voice API integration options
+- Draft mobile interface specifications
+- Plan premium feature implementation
 
-## Notes for Team
+## Known Issues
+- Next.js "missing bootstrap script" error occasionally appears
+- Auth context import issues fixed but needs verification
+- Babel configuration causing SWC to be disabled
+- Continue Without Samples button functionality needs verification
+- Back arrow from samples page needs fixing
 
-- All code must follow the security guidelines in the Technical Architecture document
-- Authentication is the highest priority and must be implemented before feature work begins
-- Report any security concerns immediately
-- Document all security-related decisions and implementations
+## Technical Stack
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Supabase Auth & Database
+- Context API for state management
+- Anthropic Claude API
+- Framer Motion (for animations)
