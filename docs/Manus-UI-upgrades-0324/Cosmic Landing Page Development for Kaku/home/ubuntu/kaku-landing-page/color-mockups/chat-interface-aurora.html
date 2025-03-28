@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaku Chat Interface - Aurora Palette</title>
+    <style>
+        :root {
+            /* Aurora Palette */
+            --cosmic-black: #0A0A14;
+            --aurora-blue: #3182CE;
+            --stellar-white: #F0F0FF;
+            
+            /* Gradient Pairs */
+            --aurora-blue-green: linear-gradient(to right, #3182CE, #38B2AC);
+            --aurora-purple-pink: linear-gradient(to right, #805AD5, #D53F8C);
+            --aurora-green-yellow: linear-gradient(to right, #38B2AC, #D69E2E);
+            
+            /* Emotional State Gradients */
+            --neutral-gradient: linear-gradient(to right, #3182CE, #38B2AC);
+            --excited-gradient: linear-gradient(to right, #D69E2E, #F6AD55);
+            --thoughtful-gradient: linear-gradient(to right, #805AD5, #D53F8C);
+            --encouraging-gradient: linear-gradient(to right, #38B2AC, #48BB78);
+            --playful-gradient: linear-gradient(to right, #D53F8C, #F687B3);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cosmic-black);
+            color: var(--stellar-white);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background-color: rgba(20, 20, 40, 0.7);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: bold;
+            background: var(--aurora-blue-green);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-left: 10px;
+        }
+        
+        .new-chat-button {
+            background: var(--aurora-blue-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(49, 130, 206, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .new-chat-button:hover {
+            box-shadow: 0 0 20px rgba(49, 130, 206, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .relationship-journey {
+            background: rgba(30, 30, 50, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .journey-title {
+            font-size: 14px;
+            color: rgba(240, 240, 255, 0.7);
+            margin-bottom: 10px;
+        }
+        
+        .journey-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .journey-progress-bar {
+            height: 100%;
+            width: 30%;
+            background: var(--aurora-blue-green);
+            border-radius: 3px;
+        }
+        
+        .journey-stage {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--stellar-white);
+        }
+        
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .chat-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .chat-item.active {
+            background: linear-gradient(to right, rgba(49, 130, 206, 0.2), rgba(56, 178, 172, 0.1));
+            border-left: 3px solid #38B2AC;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .starfield-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 20%, rgba(56, 178, 172, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 70% 60%, rgba(49, 130, 206, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(128, 90, 213, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px, 40px 40px, 35px 35px;
+            z-index: 0;
+        }
+        
+        .aurora-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(217deg, rgba(49, 130, 206, 0.03), rgba(49, 130, 206, 0) 70.71%),
+                linear-gradient(127deg, rgba(56, 178, 172, 0.03), rgba(56, 178, 172, 0) 70.71%),
+                linear-gradient(336deg, rgba(128, 90, 213, 0.03), rgba(128, 90, 213, 0) 70.71%);
+            z-index: 0;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            z-index: 1;
+        }
+        
+        .chat-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1;
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            margin-left: auto;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background: var(--cosmic-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .kaku-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kaku-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            background: var(--cosmic-black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kaku-smile {
+            width: 14px;
+            height: 6px;
+            border-radius: 0 0 7px 7px;
+            background: white;
+        }
+        
+        .kaku-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(56, 178, 172, 0.8);
+            z-index: -1;
+        }
+        
+        .user-avatar {
+            background: var(--aurora-purple-pink);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .message-content {
+            background: rgba(30, 30, 50, 0.7);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .message.kaku .message-content {
+            border-top-left-radius: 0;
+            background: rgba(49, 130, 206, 0.15);
+            border-left: 3px solid;
+            border-image: var(--neutral-gradient);
+            border-image-slice: 1;
+        }
+        
+        .message.user .message-content {
+            border-top-right-radius: 0;
+            background: rgba(128, 90, 213, 0.15);
+        }
+        
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(30, 30, 50, 0.7);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: border-color 0.3s;
+        }
+        
+        .chat-input-wrapper:focus-within {
+            border-color: #38B2AC;
+            box-shadow: 0 0 15px rgba(56, 178, 172, 0.3);
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--stellar-white);
+            font-size: 16px;
+            padding: 12px;
+            outline: none;
+        }
+        
+        .send-button {
+            background: var(--aurora-blue-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-button:hover {
+            box-shadow: 0 0 10px rgba(56, 178, 172, 0.5);
+        }
+        
+        .kaku-3d-container {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            z-index: 10;
+        }
+        
+        .kaku-3d {
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="white"/><circle cx="50" cy="50" r="35" fill="%230A0A14"/><circle cx="35" cy="45" r="5" fill="white"/><circle cx="65" cy="45" r="5" fill="white"/><path d="M40,65 Q50,75 60,65" stroke="white" stroke-width="3" fill="none"/></svg>');
+            background-size: contain;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .kaku-3d-glow {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 178, 172, 0.3) 0%, rgba(56, 178, 172, 0) 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Emotional states for Kaku */
+        .kaku-neutral .kaku-glow { box-shadow: inset 0 0 10px rgba(56, 178, 172, 0.8); }
+        .kaku-excited .kaku-glow { box-shadow: inset 0 0 10px rgba(246, 173, 85, 0.8); }
+        .kaku-thoughtful .kaku-glow { box-shadow: inset 0 0 10px rgba(213, 63, 140, 0.8); }
+        .kaku-encouraging .kaku-glow { box-shadow: inset 0 0 10px rgba(72, 187, 120, 0.8); }
+        .kaku-playful .kaku-glow { box-shadow: inset 0 0 10px rgba(246, 135, 179, 0.8); }
+        
+        .message.kaku.neutral .message-content { border-image: var(--neutral-gradient); border-image-slice: 1; }
+        .message.kaku.excited .message-content { border-image: var(--excited-gradient); border-image-slice: 1; }
+        .message.kaku.thoughtful .message-content { border-image: var(--thoughtful-gradient); border-image-slice: 1; }
+        .message.kaku.encouraging .message-content { border-image: var(--encouraging-gradient); border-image-slice: 1; }
+        .message.kaku.playful .message-content { border-image: var(--playful-gradient); border-image-slice: 1; }
+        
+        /* Bow animation */
+        .kaku-bow {
+            animation: bow 2s ease-in-out;
+        }
+        
+        @keyframes bow {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(5px) rotate(15deg); }
+            50% { transform: translateY(10px) rotate(0deg); }
+            75% { transform: translateY(5px) rotate(-15deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">My Cosmic Companion</div>
+            </div>
+            
+            <button class="new-chat-button">
+                <span>Start New Chat</span>
+            </button>
+            
+            <div class="relationship-journey">
+                <div class="journey-title">OUR JOURNEY</div>
+                <div class="journey-progress">
+                    <div class="journey-progress-bar"></div>
+                </div>
+                <div class="journey-stage">New Friend</div>
+            </div>
+            
+            <div class="chat-history">
+                <div class="chat-item active">
+                    <div>Creative Writing Help</div>
+                    <div style="font-size: 12px; color: rgba(240, 240, 255, 0.6);">Today</div>
+                </div>
+                <div class="chat-item">
+                    <div>Poetry Exploration</div>
+                    <div style="font-size: 12px; color: rgba(240, 240, 255, 0.6);">Yesterday</div>
+                </div>
+                <div class="chat-item">
+                    <div>Journal Prompts</div>
+                    <div style="font-size: 12px; color: rgba(240, 240, 255, 0.6);">Mar 22</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="starfield-bg"></div>
+            <div class="aurora-effect"></div>
+            
+            <div class="chat-header">
+                <div class="chat-title">Creative Writing Help</div>
+            </div>
+            
+            <div class="chat-messages">
+                <div class="message kaku neutral">
+                    <div class="message-avatar">
+                        <div class="kaku-avatar">
+                            <div class="kaku-face">
+                                <div class="kaku-smile"></div>
+                            </div>
+                            <div class="kaku-glow"></div>
+                        </div>
+                    </div>
+                    <div class="message-content">
+                        Hi there! I'm Kaku, your cosmic writing companion. How can I help with your creative writing today?
+                    </div>
+                </div>
+                
+                <div class="message user">
+                    <div class="message-content">
+                        I'm trying to write a short story but I'm having trouble coming up with a good opening line.
+                    </div>
+                    <div class="message-avatar user-avatar">
+                        U
+                    </div>
+                </div>
+                
+                <div class="message kaku encouraging">
+                    <div class="message-avatar">
+                        <div class="kaku-avatar">
+                            <div class="kaku-face">
+                                <div class="kaku-smile"></div>
+                            </div>
+                     <response clipped><NOTE>To save on context only part of this file has been shown to you. You should retry this tool after you have searched inside the file with `grep -n` in order to find the line numbers of what you are looking for.</NOTE>

@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+  --kaku-primary: 66, 135, 245;
+  --kaku-secondary: 131, 195, 230;
+  --kaku-accent: 255, 107, 129;
+  --kaku-dark: 10, 10, 20;
+  --kaku-light: 240, 240, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Cosmic section styles */
+.cosmic-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+}
+
+/* Section transitions */
+section {
+  transition: opacity 0.5s ease;
+}
+
+section.active {
+  opacity: 1;
+}
+
+section:not(.active) {
+  opacity: 0.3;
+}
+
+/* Scroll animations */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+[data-animate].animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(var(--kaku-dark), 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--kaku-primary), 0.7);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--kaku-primary), 1);
+}
+
+/* Typing indicator animation */
+.typing-indicator {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Cosmic glow effects */
+.cosmic-glow {
+  box-shadow: 0 0 15px rgba(var(--kaku-secondary), 0.5);
+}
+
+.cosmic-pulse {
+  animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(var(--kaku-secondary), 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(var(--kaku-secondary), 0.8);
+  }
+}

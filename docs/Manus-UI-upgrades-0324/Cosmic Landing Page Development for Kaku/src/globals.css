@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-dragging {
+  user-select: none;
+}
+
+body {
+  @apply bg-cosmic-black text-stellar-white font-sans antialiased overflow-x-hidden;
+}
+
+/* Locomotive Scroll container */
+.scroll-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Reduced motion settings */
+.reduced-motion * {
+  transition-duration: 0.1s !important;
+  animation-duration: 0.1s !important;
+}
+
+.reduced-motion .disable-animation {
+  animation: none !important;
+  transition: none !important;
+}
+
+.cosmic-glow {
+  filter: drop-shadow(0 0 8px theme('colors.nebula-blue'));
+}
+
+.text-cosmic-gradient {
+  @apply bg-gradient-to-r from-nebula-blue to-cosmic-teal text-transparent bg-clip-text;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+  
+  .container-section {
+    @apply min-h-screen py-24 px-6 relative flex flex-col items-center justify-center;
+  }
+} 
